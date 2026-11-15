@@ -985,6 +985,445 @@ strong {
   color: var(--grey-2);
 }
 
+/* ---------- Theme toggle and disco mode ---------- */
+
+.jukebox-theme {
+  position: fixed;
+  bottom: clamp(14px, 2.5vw, 38px);
+  left: clamp(14px, 2.5vw, 38px);
+  z-index: 6;
+  display: grid;
+  place-items: center;
+  width: 46px;
+  height: 46px;
+  padding: 0;
+  border: 1px solid var(--border);
+  border-radius: 50%;
+  background: rgba(56, 42, 57, 0.86);
+  color: var(--text);
+  cursor: pointer;
+  backdrop-filter: blur(6px);
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease,
+    color 0.2s ease,
+    box-shadow 0.2s ease,
+    transform 0.2s ease;
+}
+
+.jukebox-theme:hover {
+  border-color: var(--offwhite-1);
+  background: var(--offwhite-1);
+  color: var(--grey-2);
+  transform: translateY(-2px);
+}
+
+.jukebox-theme:focus-visible {
+  outline: 2px solid var(--water-2);
+  outline-offset: 3px;
+}
+
+.jukebox-theme > svg {
+  transition: transform 0.3s ease;
+}
+
+.jukebox-theme:hover > svg {
+  transform: rotate(-14deg) scale(1.08);
+}
+
+.jukebox-theme__badge {
+  position: absolute;
+  top: 50%;
+  left: calc(100% + 8px);
+  padding: 3px 9px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-pill);
+  background: rgba(25, 24, 22, 0.92);
+  color: var(--offwhite-2);
+  font-family: var(--font-display);
+  font-size: 0.66rem;
+  letter-spacing: 0.04em;
+  pointer-events: none;
+  transform: translateY(-50%);
+  white-space: nowrap;
+  animation: theme-badge-in 0.2s ease-out;
+}
+
+.theme-disco {
+  --accent: #ff6bdc;
+  --accent-2: #5be7ff;
+}
+
+.theme-disco .jukebox-theme {
+  border-color: #ff5bd7;
+  color: #ffe45b;
+  box-shadow:
+    0 0 0 2px rgba(255, 91, 215, 0.16),
+    0 0 26px rgba(255, 91, 215, 0.48);
+  animation: disco-theme-glow 1.8s ease-in-out infinite;
+}
+
+.theme-disco .jukebox-theme > svg {
+  animation: disco-icon-spin 5s linear infinite;
+}
+
+.theme-disco .jukebox-theme__badge {
+  border-color: rgba(255, 255, 255, 0.42);
+  background: linear-gradient(100deg, #ff5bd7, #5be7ff 56%, #ffe45b);
+  color: #1a0e24;
+  box-shadow: 0 0 14px rgba(255, 91, 215, 0.42);
+}
+
+.theme-mythology .jukebox-theme {
+  border-color: rgba(255, 209, 102, 0.68);
+  color: #ffd166;
+  box-shadow: 0 0 20px rgba(255, 209, 102, 0.26);
+}
+
+.theme-mythology .jukebox-theme__badge {
+  border-color: rgba(255, 209, 102, 0.5);
+  color: #ffd166;
+}
+
+.disco-lights,
+.disco-confetti {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+}
+
+.disco-lights {
+  z-index: 0;
+  overflow: hidden;
+  contain: strict;
+}
+
+.disco-lights::before {
+  content: '';
+  position: absolute;
+  top: -12vh;
+  left: 50%;
+  width: 140vw;
+  height: 32vh;
+  background: radial-gradient(ellipse at top, rgba(255, 255, 255, 0.2), transparent 70%);
+  filter: blur(18px);
+  transform: translateX(-50%);
+}
+
+.disco-lights::after {
+  content: '';
+  position: absolute;
+  top: 42%;
+  left: 50%;
+  width: 120vmin;
+  height: 120vmin;
+  border-radius: 50%;
+  background: conic-gradient(
+    from 0deg,
+    rgba(255, 91, 215, 0.14),
+    transparent 18%,
+    rgba(91, 231, 255, 0.13) 38%,
+    transparent 58%,
+    rgba(255, 228, 91, 0.1) 78%,
+    transparent 100%
+  );
+  filter: blur(22px);
+  opacity: 0.58;
+  transform: translate(-50%, -50%);
+  animation: disco-aura-spin 18s linear infinite;
+}
+
+.disco-beam {
+  position: absolute;
+  top: -10vh;
+  left: 50%;
+  width: 13vw;
+  height: 96vh;
+  margin-left: -6.5vw;
+  background: linear-gradient(to bottom, var(--beam-color), transparent 82%);
+  clip-path: polygon(46% 0, 54% 0, 100% 100%, 0 100%);
+  filter: blur(9px);
+  opacity: 0.45;
+  transform-origin: 50% 0;
+  animation: disco-beam-sweep var(--beam-duration, 5s) ease-in-out infinite alternate;
+  animation-delay: var(--beam-delay, 0s);
+}
+
+.disco-beam:nth-child(1) {
+  --beam-color: rgba(255, 74, 214, 0.85);
+  --beam-start: -38deg;
+  --beam-end: -8deg;
+  --beam-duration: 4.6s;
+  --beam-delay: -0.8s;
+}
+
+.disco-beam:nth-child(2) {
+  --beam-color: rgba(91, 231, 255, 0.8);
+  --beam-start: -26deg;
+  --beam-end: 18deg;
+  --beam-duration: 5.5s;
+  --beam-delay: -2.1s;
+  width: 10vw;
+  margin-left: -5vw;
+}
+
+.disco-beam:nth-child(3) {
+  --beam-color: rgba(255, 228, 91, 0.74);
+  --beam-start: -12deg;
+  --beam-end: 34deg;
+  --beam-duration: 4.1s;
+  --beam-delay: -1.4s;
+  width: 8vw;
+  margin-left: -4vw;
+}
+
+.disco-beam:nth-child(4) {
+  --beam-color: rgba(139, 255, 159, 0.7);
+  --beam-start: 4deg;
+  --beam-end: 46deg;
+  --beam-duration: 5.9s;
+  --beam-delay: -3.2s;
+}
+
+.disco-beam:nth-child(5) {
+  --beam-color: rgba(255, 159, 91, 0.72);
+  --beam-start: 22deg;
+  --beam-end: -20deg;
+  --beam-duration: 4.8s;
+  --beam-delay: -2.6s;
+  width: 9vw;
+  margin-left: -4.5vw;
+}
+
+.disco-beam:nth-child(6) {
+  --beam-color: rgba(192, 139, 255, 0.78);
+  --beam-start: -46deg;
+  --beam-end: 4deg;
+  --beam-duration: 6.2s;
+  --beam-delay: -1.1s;
+}
+
+.disco-beam:nth-child(7) {
+  --beam-color: rgba(255, 255, 255, 0.52);
+  --beam-start: 32deg;
+  --beam-end: -30deg;
+  --beam-duration: 5.2s;
+  --beam-delay: -3.7s;
+  width: 6vw;
+  margin-left: -3vw;
+}
+
+.disco-confetti {
+  z-index: 4;
+  overflow: hidden;
+}
+
+.disco-confetti__piece {
+  position: absolute;
+  top: -10vh;
+  left: var(--confetti-left);
+  opacity: 0;
+  animation: disco-confetti-fall var(--confetti-duration) linear infinite;
+  animation-delay: var(--confetti-delay);
+  will-change: transform;
+}
+
+.theme-disco .jukebox-page__bg {
+  filter: blur(14px) brightness(0.62) saturate(1.55) contrast(1.05);
+}
+
+.theme-disco .jukebox-page__tint {
+  background:
+    radial-gradient(circle at 18% 24%, rgba(255, 91, 215, 0.34), transparent 42%),
+    radial-gradient(circle at 82% 28%, rgba(91, 231, 255, 0.3), transparent 44%),
+    radial-gradient(circle at 50% 82%, rgba(255, 228, 91, 0.18), transparent 48%),
+    linear-gradient(180deg, rgba(21, 8, 42, 0.18), rgba(21, 8, 42, 0.68));
+  animation: disco-tint-hue 12s linear infinite;
+}
+
+.theme-disco .jukebox-cabinet {
+  filter:
+    drop-shadow(0 26px 44px rgba(0, 0, 0, 0.58))
+    drop-shadow(0 0 28px rgba(255, 91, 215, 0.22));
+}
+
+.theme-disco .jukebox-cabinet__screen {
+  filter: drop-shadow(0 0 26px rgba(91, 231, 255, 0.55));
+  animation: disco-screen-glow 1.8s ease-in-out infinite alternate;
+}
+
+.theme-disco .jukebox-cabinet__track {
+  border-color: rgba(255, 255, 255, 0.58);
+  background: linear-gradient(90deg, #ff5bd7, #5be7ff 52%, #ffe45b);
+  color: #1a0e24;
+  box-shadow: 0 0 18px rgba(255, 91, 215, 0.52);
+}
+
+.theme-disco .now-playing {
+  border-color: rgba(255, 107, 220, 0.65);
+  background: linear-gradient(120deg, rgba(72, 24, 84, 0.9), rgba(22, 42, 80, 0.9));
+  box-shadow: 0 0 22px rgba(91, 231, 255, 0.2);
+}
+
+.theme-disco .now-playing__label {
+  color: #ffe45b;
+}
+
+.theme-disco .now-playing__disc {
+  box-shadow:
+    inset 0 0 0 5px rgba(0, 0, 0, 0.36),
+    0 0 18px rgba(255, 91, 215, 0.42);
+}
+
+.theme-disco .jukebox-transport__play {
+  animation: disco-play-pulse 1.5s ease-in-out infinite;
+}
+
+.theme-disco .jukebox-knob {
+  filter: drop-shadow(0 0 13px rgba(255, 91, 215, 0.62));
+}
+
+.theme-disco .jukebox-knob__value {
+  border-color: rgba(255, 107, 220, 0.7);
+}
+
+.theme-disco .jukebox-rack__button {
+  border-color: rgba(255, 107, 220, 0.45);
+}
+
+.theme-disco .jukebox-rack__button:nth-child(even) {
+  border-color: rgba(91, 231, 255, 0.5);
+}
+
+.theme-disco .jukebox-rack__button:hover:not(:disabled) {
+  border-color: var(--offwhite-1);
+  background: linear-gradient(135deg, #ff5bd7, #5be7ff);
+  color: #1a0e24;
+}
+
+.theme-disco .jukebox-controls {
+  border-color: rgba(255, 107, 220, 0.55);
+  background: linear-gradient(
+    110deg,
+    rgba(72, 24, 84, 0.92),
+    rgba(22, 42, 80, 0.92),
+    rgba(72, 24, 84, 0.92)
+  );
+  background-size: 220% 100%;
+  box-shadow:
+    0 20px 50px rgba(0, 0, 0, 0.35),
+    0 0 30px rgba(91, 231, 255, 0.2),
+    0 0 20px rgba(255, 91, 215, 0.24);
+  animation: disco-controls-gradient 6s linear infinite;
+}
+
+.theme-disco .audio-player__play {
+  background: linear-gradient(135deg, #ff5bd7, #5be7ff);
+  color: #1a0e24;
+}
+
+.theme-disco .audio-player__play:hover:not(:disabled) {
+  background: linear-gradient(135deg, #ffe45b, #ff5bd7);
+}
+
+@keyframes theme-badge-in {
+  from {
+    opacity: 0;
+    transform: translateY(-50%) translateX(-5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(-50%) translateX(0);
+  }
+}
+
+@keyframes disco-theme-glow {
+  0%,
+  100% {
+    box-shadow:
+      0 0 0 2px rgba(255, 91, 215, 0.16),
+      0 0 26px rgba(255, 91, 215, 0.48);
+  }
+  50% {
+    box-shadow:
+      0 0 0 2px rgba(91, 231, 255, 0.18),
+      0 0 30px rgba(91, 231, 255, 0.5);
+  }
+}
+
+@keyframes disco-icon-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes disco-aura-spin {
+  to {
+    transform: translate(-50%, -50%) rotate(360deg);
+  }
+}
+
+@keyframes disco-beam-sweep {
+  from {
+    transform: rotate(var(--beam-start));
+  }
+  to {
+    transform: rotate(var(--beam-end));
+  }
+}
+
+@keyframes disco-confetti-fall {
+  0% {
+    opacity: 0;
+    transform: translate3d(0, -10vh, 0) rotate(0deg);
+  }
+  8% {
+    opacity: 1;
+  }
+  92% {
+    opacity: 0.95;
+  }
+  100% {
+    opacity: 0;
+    transform: translate3d(var(--confetti-drift), 120vh, 0) rotate(var(--confetti-spin));
+  }
+}
+
+@keyframes disco-tint-hue {
+  to {
+    filter: hue-rotate(360deg);
+  }
+}
+
+@keyframes disco-screen-glow {
+  from {
+    filter: drop-shadow(0 0 16px rgba(255, 91, 215, 0.42));
+  }
+  to {
+    filter: drop-shadow(0 0 30px rgba(91, 231, 255, 0.68));
+  }
+}
+
+@keyframes disco-play-pulse {
+  0%,
+  100% {
+    box-shadow:
+      0 8px 18px rgba(0, 0, 0, 0.5),
+      0 0 0 0 rgba(255, 91, 215, 0.4);
+  }
+  50% {
+    box-shadow:
+      0 8px 18px rgba(0, 0, 0, 0.5),
+      0 0 0 10px rgba(255, 91, 215, 0);
+  }
+}
+
+@keyframes disco-controls-gradient {
+  to {
+    background-position: 220% 50%;
+  }
+}
+
 /* ---------- Audio player and controls ---------- */
 
 .audio-player {
@@ -1614,6 +2053,12 @@ strong {
 
 /* ---------- Responsive ---------- */
 
+@media (max-width: 1200px) {
+  .jukebox-theme {
+    bottom: 96px;
+  }
+}
+
 @media (max-width: 900px) {
   .team-layout,
   .detail-layout {
@@ -1672,6 +2117,19 @@ strong {
     width: min(320px, 68vw);
   }
 
+  .jukebox-theme {
+    bottom: 132px;
+    left: 8px;
+    width: 40px;
+    height: 40px;
+  }
+
+  .jukebox-theme__badge {
+    left: calc(100% + 6px);
+    padding: 2px 7px;
+    font-size: 0.62rem;
+  }
+
   .jukebox-rack {
     right: 8px;
   }
@@ -1707,5 +2165,10 @@ strong {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
+  }
+
+  .disco-lights,
+  .disco-confetti {
+    display: none;
   }
 }

@@ -4,6 +4,7 @@ import { useRoute, useRouter } from 'vue-router'
 import {
   PhCaretDown,
   PhCaretUp,
+  PhDiscoBall,
   PhFileAudio,
   PhFilmStrip,
   PhMusicNotes,
@@ -72,6 +73,81 @@ const downloadName = computed(() =>
 
 const volumePercent = computed(() => Math.round(volume.value * 100))
 const knobAngle = computed(() => -135 + volumePercent.value * 2.7)
+
+const themeOrder = ['normal', 'disco', 'mythology'] as const
+type JukeboxTheme = (typeof themeOrder)[number]
+const theme = ref<JukeboxTheme>('normal')
+const themeLabel = computed(() => {
+  const labels: Record<JukeboxTheme, string> = {
+    normal: 'Normal',
+    disco: 'Disco',
+    mythology: 'Mythology',
+  }
+
+  return labels[theme.value]
+})
+const nextThemeLabel = computed(
+  () => themeOrder[(themeOrder.indexOf(theme.value) + 1) % themeOrder.length],
+)
+const nextThemeTitle = computed(() => {
+  const labels: Record<JukeboxTheme, string> = {
+    normal: 'Normal',
+    disco: 'Disco',
+    mythology: 'Mythology',
+  }
+
+  return labels[nextThemeLabel.value]
+})
+
+function cycleTheme(): void {
+  const index = themeOrder.indexOf(theme.value)
+  theme.value = themeOrder[(index + 1) % themeOrder.length]
+}
+
+type ConfettiPiece = {
+  id: number
+  left: number
+  delay: number
+  duration: number
+  drift: number
+  spin: number
+  width: number
+  height: number
+  color: string
+  radius: string
+}
+
+const confettiColors = ['#ff5bd7', '#5be7ff', '#ffe45b', '#8bff9f', '#ff9f5b', '#c08bff']
+const confettiPieces: ConfettiPiece[] = Array.from({ length: 64 }, (_, index) => {
+  const width = 5 + Math.random() * 7
+
+  return {
+    id: index,
+    left: Math.random() * 100,
+    delay: -Math.random() * 9,
+    duration: 5.5 + Math.random() * 5,
+    drift: (Math.random() * 2 - 1) * 180,
+    spin: 360 + Math.random() * 900,
+    width,
+    height: width * (1.2 + Math.random() * 1.1),
+    color: confettiColors[index % confettiColors.length],
+    radius: index % 3 === 0 ? '50%' : '2px',
+  }
+})
+
+function confettiStyle(piece: ConfettiPiece): Record<string, string> {
+  return {
+    '--confetti-left': `${piece.left}%`,
+    '--confetti-delay': `${piece.delay}s`,
+    '--confetti-duration': `${piece.duration}s`,
+    '--confetti-drift': `${piece.drift}px`,
+    '--confetti-spin': `${piece.spin}deg`,
+    background: piece.color,
+    width: `${piece.width}px`,
+    height: `${piece.height}px`,
+    borderRadius: piece.radius,
+  }
+}
 
 let runToken = 0
 
@@ -209,9 +285,17 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <div class="jukebox-page">
+  <div
+    class="jukebox-page"
+    :class="{ 'theme-disco': theme === 'disco', 'theme-mythology': theme === 'mythology' }"
+    :data-theme="theme"
+  >
     <div class="jukebox-page__bg" :style="{ backgroundImage: `url(${activeImage})` }"></div>
     <div class="jukebox-page__tint"></div>
+
+    <div v-if="theme === 'disco'" class="disco-lights" aria-hidden="true">
+      <span v-for="beam in 7" :key="beam" class="disco-beam"></span>
+    </div>
 
     <div class="jukebox-shell">
       <header class="jukebox-topbar">
@@ -424,6 +508,27 @@ onBeforeUnmount(() => {
         </button>
       </div>
     </div>
+
+    <div v-if="theme === 'disco'" class="disco-confetti" aria-hidden="true">
+      <span
+        v-for="piece in confettiPieces"
+        :key="piece.id"
+        class="disco-confetti__piece"
+        :style="confettiStyle(piece)"
+      ></span>
+    </div>
+
+    <button
+      class="jukebox-theme"
+      type="button"
+      :title="`Theme: ${themeLabel}. Click for ${nextThemeTitle}.`"
+      :aria-label="`Theme: ${themeLabel}. Switch to ${nextThemeTitle} theme.`"
+      @click="cycleTheme"
+    >
+      <PhDiscoBall :size="23" weight="fill" />
+      <span v-if="theme !== 'normal'" class="jukebox-theme__badge">{{ themeLabel }}</span>
+    </button>
+    <p class="sr-only" aria-live="polite">Theme: {{ themeLabel }}</p>
 
     <audio
       ref="audioEl"
