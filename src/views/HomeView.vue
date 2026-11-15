@@ -18,8 +18,8 @@ import conceptImage from '@/assets/images/concept-jukebox.webp'
         <h1 class="sr-only">Aetherial Earth's Jukebox</h1>
 
         <p class="hero__copy">
-          Turn NASA Earth imagery into sound. Each strip of an image becomes a note, letting you
-          listen to our planet as a record you can play, spin, and explore.
+          Turning NASA Earth imagery into sound. Each strip of an image becomes a note (or a chord), letting you
+          listen to the sounds of the planet as a record you can play, spin, and explore!
         </p>
 
         <div class="hero__actions">
