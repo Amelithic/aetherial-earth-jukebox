@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { RouterLink } from 'vue-router'
-import logo from '@/assets/images/EarthsJukeboxLogo.png'
+import logo from '@/assets/images/EarthsJukeboxLogo.webp'
 </script>
 
 <template>
@@ -10,7 +10,7 @@ import logo from '@/assets/images/EarthsJukeboxLogo.png'
     </RouterLink>
 
     <nav class="site-nav__links" aria-label="Main navigation">
-      <RouterLink to="/jukebox" class="button button--primary">Open Project</RouterLink>
+      <RouterLink to="/jukebox/browse" class="button button--primary">Open Project</RouterLink>
       <RouterLink to="/about-us" class="button button--ghost">About Us</RouterLink>
     </nav>
   </header>

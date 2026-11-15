@@ -2,9 +2,9 @@
 import { RouterLink } from 'vue-router'
 import Navbar from '@/components/Navbar.vue'
 import Footer from '@/components/Footer.vue'
-import aetherialLogo from '@/assets/images/AetherialLogo.png'
-import jukeboxLogo from '@/assets/images/EarthsJukeboxLogo.png'
-import conceptImage from '@/assets/images/concept-jukebox.png'
+import aetherialLogo from '@/assets/images/AetherialLogo.webp'
+import jukeboxLogo from '@/assets/images/EarthsJukeboxLogo.webp'
+import conceptImage from '@/assets/images/concept-jukebox.webp'
 </script>
 
 <template>
@@ -23,7 +23,7 @@ import conceptImage from '@/assets/images/concept-jukebox.png'
         </p>
 
         <div class="hero__actions">
-          <RouterLink to="/jukebox" class="button button--primary">Play the jukebox</RouterLink>
+          <RouterLink to="/jukebox/browse" class="button button--primary">Play the jukebox</RouterLink>
           <RouterLink to="/about-us" class="button button--ghost">Meet the team</RouterLink>
         </div>
 
@@ -84,7 +84,7 @@ import conceptImage from '@/assets/images/concept-jukebox.png'
       </section>
 
       <div class="cta-row">
-        <RouterLink to="/jukebox" class="button button--primary button--large">Play!</RouterLink>
+        <RouterLink to="/jukebox/browse" class="button button--primary button--large">Play!</RouterLink>
       </div>
     </main>
   </div>

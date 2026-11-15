@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { Dataset } from '@/assets/data/datasets'
-import earthPlaceholder from '@/assets/images/EarthPlaceholderKurzgesagt.png'
+import earthPlaceholder from '@/assets/images/EarthPlaceholderKurzgesagt.webp'
 
 defineProps<{ dataset: Dataset }>()
 

@@ -47,7 +47,7 @@ function animate(): void {
   frameId = requestAnimationFrame(animate)
 
   if (sphere && !isDragging) {
-    sphere.rotation.y += 0.0018 + velocityX
+    sphere.rotation.y -= 0.0018 + velocityX
     sphere.rotation.x += velocityY
     velocityX *= 0.94
     velocityY *= 0.94

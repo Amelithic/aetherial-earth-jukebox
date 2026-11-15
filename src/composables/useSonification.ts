@@ -9,6 +9,8 @@ export interface SonificationOptions {
   waveform?: string
   mode?: 'single' | 'chord' | 'arpeggio'
   scale?: keyof typeof SCALE_PRESETS
+  octaveShift?: number
+  reverb?: boolean
 }
 
 const SCALE_PRESETS = {
@@ -40,21 +42,32 @@ export function useSonification() {
     const waveform = options.waveform ?? 'triangle'
     const mode = options.mode ?? 'single'
     const scale = options.scale ?? 'major'
+    const octaveShift = options.octaveShift ?? 1
+    const reverb = options.reverb ?? false
     const duration = Math.max(0.1, sourceSlices.length * secondsPerSlice)
 
-    const context = new OfflineAudioContext(1, Math.ceil(sampleRate * duration), sampleRate)
+    const context = new OfflineAudioContext(1, Math.ceil(sampleRate * (duration + (reverb ? 1.5 : 0))), sampleRate)
     const master = context.createGain()
     master.gain.value = volume
     master.connect(context.destination)
 
-    if (mode === 'chord') {
-      renderChordMode(context, master, sourceSlices, secondsPerSlice, waveform, scale)
-    } else if (mode === 'arpeggio') {
-      renderArpeggioMode(context, master, sourceSlices, secondsPerSlice, waveform, scale)
-    } else {
-      renderSingleMode(context, master, sourceSlices, secondsPerSlice, waveform, scale)
+    if (reverb) {
+      const convolver = context.createConvolver()
+      convolver.buffer = createReverbImpulse(context, 1.5, 2.5)
+      const wetGain = context.createGain()
+      wetGain.gain.value = 0.3
+      master.connect(convolver)
+      convolver.connect(wetGain)
+      wetGain.connect(context.destination)
     }
 
+    if (mode === 'chord') {
+      renderChordMode(context, master, sourceSlices, secondsPerSlice, waveform, scale, octaveShift)
+    } else if (mode === 'arpeggio') {
+      renderArpeggioMode(context, master, sourceSlices, secondsPerSlice, waveform, scale, octaveShift)
+    } else {
+      renderSingleMode(context, master, sourceSlices, secondsPerSlice, waveform, scale, octaveShift)
+    }
     return context.startRendering()
   }
 
@@ -65,6 +78,7 @@ export function useSonification() {
     secondsPerSlice: number,
     waveform: string,
     scale: keyof typeof SCALE_PRESETS,
+    octaveShift: number,
   ) {
     slices.forEach((slice, index) => {
       const start = index * secondsPerSlice
@@ -72,8 +86,10 @@ export function useSonification() {
       const oscillator = context.createOscillator()
       const envelope = context.createGain()
 
+      const baseFreq = brightnessToFrequency(slice.brightness, slice.hue, scale)
+      
       oscillator.type = waveform as OscillatorType
-      oscillator.frequency.value = brightnessToFrequency(slice.brightness, slice.hue, scale)
+      oscillator.frequency.value = baseFreq * Math.pow(2, octaveShift)
 
       envelope.gain.setValueAtTime(0.0001, start)
       envelope.gain.exponentialRampToValueAtTime(1, start + 0.005)
@@ -93,12 +109,14 @@ export function useSonification() {
     secondsPerSlice: number,
     waveform: string,
     scale: keyof typeof SCALE_PRESETS,
+    octaveShift: number,
   ): void {
     slices.forEach((slice, index) => {
       const start = index * secondsPerSlice
       const end = start + secondsPerSlice * 0.9
+      const baseFreq = brightnessToFrequency(slice.brightness, slice.hue, scale) * Math.pow(2, octaveShift)
+      
       const chordNotes = ['root', 'third', 'fifth'].map((note) => {
-        const baseFreq = brightnessToFrequency(slice.brightness, slice.hue, scale)
         const intervals: Record<string, number> = {
           root: 0,
           third: 4,
@@ -141,6 +159,7 @@ export function useSonification() {
     secondsPerSlice: number,
     waveform: string,
     scale: keyof typeof SCALE_PRESETS,
+    octaveShift: number,
   ) {
     slices.forEach((slice, index) => {
       const start = index * secondsPerSlice
@@ -149,7 +168,8 @@ export function useSonification() {
 
       const degree = brightnessToScaleDegree(slice.brightness, scale)
       const semitones = degree + Math.round((slice.hue / 360) * 3)
-      const frequency = 110 * Math.pow(2, semitones / 12)
+      // Base frequency 110Hz (A2) scaled by octaveShift
+      const frequency = (110 * Math.pow(2, octaveShift)) * Math.pow(2, semitones / 12)
 
       const oscillator = context.createOscillator()
       const envelope = context.createGain()
@@ -166,6 +186,19 @@ export function useSonification() {
       oscillator.start(start)
       oscillator.stop(end + 0.01)
     })
+  }
+
+  function createReverbImpulse(context: OfflineAudioContext, duration: number, decay: number): AudioBuffer {
+    const sampleRate = context.sampleRate
+    const length = Math.ceil(sampleRate * duration)
+    const impulse = context.createBuffer(1, length, sampleRate)
+    const data = impulse.getChannelData(0)
+
+    for (let i = 0; i < length; i++) {
+      data[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / length, decay)
+    }
+
+    return impulse
   }
 
   function bufferToWav(buffer: AudioBuffer): Blob {

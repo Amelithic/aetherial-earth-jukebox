@@ -72,7 +72,7 @@ p {
   margin: 0;
 }
 
-p + p {
+p+p {
   margin-top: 1rem;
 }
 
@@ -134,14 +134,17 @@ strong {
   position: relative;
   min-height: 100vh;
   width: 100%;
-  
+
   /* 1. Core background properties */
-  background-image: url('/images/nasa-Yj1M5riCKk4-unsplash.jpg'); /* Note: see path tip below */
+  background-image: url('/images/nasa-Yj1M5riCKk4-unsplash.webp');
+  /* Note: see path tip below */
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
-  background-attachment: fixed; /* Optional: creates a smooth parallax scroll effect */
-  background-color: #08060b; /* Fallback deep space color while loading */
+  background-attachment: fixed;
+  /* Optional: creates a smooth parallax scroll effect */
+  background-color: #08060b;
+  /* Fallback deep space color while loading */
 }
 
 /* 2. Cosmic vignette / dark overlay for better text contrast */
@@ -150,13 +153,13 @@ strong {
   position: absolute;
   inset: 0;
   z-index: 0;
-  background: 
+  background:
     rgba(8, 6, 11, 0.75);
   pointer-events: none;
 }
 
 /* 3. Ensure your page content sits safely on top of the overlay */
-.space-main > * {
+.space-main>* {
   position: relative;
   z-index: 1;
 }
@@ -181,7 +184,7 @@ strong {
   padding: var(--section-gap) 0;
 }
 
-.stack > * + * {
+.stack>*+* {
   margin-top: 1rem;
 }
 
@@ -391,10 +394,12 @@ strong {
 }
 
 @keyframes bob {
+
   0%,
   100% {
     transform: translateY(0);
   }
+
   50% {
     transform: translateY(6px);
   }
@@ -590,11 +595,9 @@ strong {
   content: '';
   position: absolute;
   inset: 0;
-  background: repeating-linear-gradient(
-    0deg,
-    rgba(248, 248, 229, 0.028) 0 1px,
-    transparent 1px 4px
-  );
+  background: repeating-linear-gradient(0deg,
+      rgba(248, 248, 229, 0.028) 0 1px,
+      transparent 1px 4px);
   mix-blend-mode: soft-light;
 }
 
@@ -718,9 +721,11 @@ strong {
   width: 110%;
   height: 35px;
   background: radial-gradient(ellipse at center, rgba(0, 0, 0, 0.75) 20%, rgba(0, 0, 0, 0) 90%);
-  z-index: -1; /* Places the shadow behind the base image */
+  z-index: -1;
+  /* Places the shadow behind the base image */
   pointer-events: none;
-  filter: blur(4px); /* Softens the shadow edges */
+  filter: blur(4px);
+  /* Softens the shadow edges */
 }
 
 .jukebox-atlas {
@@ -734,12 +739,12 @@ strong {
   pointer-events: none;
   user-select: none;
   filter:
-    sepia(0.55) saturate(0.72) brightness(0.68) contrast(1.05)
-    drop-shadow(0 22px 36px rgba(0, 0, 0, 0.52));
+    sepia(0.55) saturate(0.72) brightness(0.68) contrast(1.05) drop-shadow(0 22px 36px rgba(0, 0, 0, 0.52));
   transform: translateX(-50%);
   transform-origin: 50% 100%;
   -webkit-user-drag: none;
 }
+
 .jukebox-atlas-overlay {
   position: absolute;
   z-index: 0;
@@ -750,8 +755,7 @@ strong {
   pointer-events: none;
   user-select: none;
   filter:
-    sepia(0.55) saturate(0.72) brightness(0.68) contrast(1.05)
-    drop-shadow(0 22px 36px rgba(0, 0, 0, 0.52));
+    sepia(0.55) saturate(0.72) brightness(0.68) contrast(1.05) drop-shadow(0 22px 36px rgba(0, 0, 0, 0.52));
   -webkit-user-drag: none;
 }
 
@@ -1114,11 +1118,11 @@ strong {
   outline-offset: 3px;
 }
 
-.jukebox-theme > svg {
+.jukebox-theme>svg {
   transition: transform 0.3s ease;
 }
 
-.jukebox-theme:hover > svg {
+.jukebox-theme:hover>svg {
   transform: rotate(-14deg) scale(1.08);
 }
 
@@ -1171,7 +1175,7 @@ strong {
   animation: disco-theme-glow 1.8s ease-in-out infinite;
 }
 
-.theme-disco .jukebox-theme > svg {
+.theme-disco .jukebox-theme>svg {
   animation: disco-icon-spin 5s linear infinite;
 }
 
@@ -1210,8 +1214,7 @@ strong {
 
 .theme-mythology .jukebox-cabinet {
   filter:
-    sepia(0.22) saturate(0.88)
-    drop-shadow(0 28px 46px rgba(0, 0, 0, 0.6));
+    sepia(0.22) saturate(0.88) drop-shadow(0 28px 46px rgba(0, 0, 0, 0.6));
 }
 
 .theme-mythology .now-playing,
@@ -1271,15 +1274,13 @@ strong {
   width: 120vmin;
   height: 120vmin;
   border-radius: 50%;
-  background: conic-gradient(
-    from 0deg,
-    rgba(255, 91, 215, 0.14),
-    transparent 18%,
-    rgba(91, 231, 255, 0.13) 38%,
-    transparent 58%,
-    rgba(255, 228, 91, 0.1) 78%,
-    transparent 100%
-  );
+  background: conic-gradient(from 0deg,
+      rgba(255, 91, 215, 0.14),
+      transparent 18%,
+      rgba(91, 231, 255, 0.13) 38%,
+      transparent 58%,
+      rgba(255, 228, 91, 0.1) 78%,
+      transparent 100%);
   filter: blur(22px);
   opacity: 0.58;
   transform: translate(-50%, -50%);
@@ -1396,8 +1397,7 @@ strong {
 
 .theme-disco .jukebox-cabinet {
   filter:
-    drop-shadow(0 26px 44px rgba(0, 0, 0, 0.58))
-    drop-shadow(0 0 28px rgba(255, 91, 215, 0.22));
+    drop-shadow(0 26px 44px rgba(0, 0, 0, 0.58)) drop-shadow(0 0 28px rgba(255, 91, 215, 0.22));
 }
 
 .theme-disco .jukebox-cabinet__screen {
@@ -1456,12 +1456,10 @@ strong {
 
 .theme-disco .jukebox-controls {
   border-color: rgba(255, 107, 220, 0.55);
-  background: linear-gradient(
-    110deg,
-    rgba(72, 24, 84, 0.92),
-    rgba(22, 42, 80, 0.92),
-    rgba(72, 24, 84, 0.92)
-  );
+  background: linear-gradient(110deg,
+      rgba(72, 24, 84, 0.92),
+      rgba(22, 42, 80, 0.92),
+      rgba(72, 24, 84, 0.92));
   background-size: 220% 100%;
   box-shadow:
     0 20px 50px rgba(0, 0, 0, 0.35),
@@ -1489,6 +1487,7 @@ strong {
     opacity: 0;
     transform: translateY(-50%) translateX(-5px);
   }
+
   to {
     opacity: 1;
     transform: translateY(-50%) translateX(0);
@@ -1496,12 +1495,14 @@ strong {
 }
 
 @keyframes disco-theme-glow {
+
   0%,
   100% {
     box-shadow:
       0 0 0 2px rgba(255, 91, 215, 0.16),
       0 0 26px rgba(255, 91, 215, 0.48);
   }
+
   50% {
     box-shadow:
       0 0 0 2px rgba(91, 231, 255, 0.18),
@@ -1525,6 +1526,7 @@ strong {
   from {
     transform: rotate(var(--beam-start));
   }
+
   to {
     transform: rotate(var(--beam-end));
   }
@@ -1535,12 +1537,15 @@ strong {
     opacity: 0;
     transform: translate3d(0, -10vh, 0) rotate(0deg);
   }
+
   8% {
     opacity: 1;
   }
+
   92% {
     opacity: 0.95;
   }
+
   100% {
     opacity: 0;
     transform: translate3d(var(--confetti-drift), 120vh, 0) rotate(var(--confetti-spin));
@@ -1557,18 +1562,21 @@ strong {
   from {
     filter: drop-shadow(0 0 16px rgba(255, 91, 215, 0.42));
   }
+
   to {
     filter: drop-shadow(0 0 30px rgba(91, 231, 255, 0.68));
   }
 }
 
 @keyframes disco-play-pulse {
+
   0%,
   100% {
     box-shadow:
       0 8px 18px rgba(0, 0, 0, 0.5),
       0 0 0 0 rgba(255, 91, 215, 0.4);
   }
+
   50% {
     box-shadow:
       0 8px 18px rgba(0, 0, 0, 0.5),
@@ -1975,7 +1983,7 @@ strong {
   cursor: pointer;
 }
 
-.speed-control__custom-trigger > span:first-child {
+.speed-control__custom-trigger>span:first-child {
   display: flex;
   align-items: center;
   gap: 5px;
@@ -2082,7 +2090,7 @@ strong {
   margin-top: 4px;
 }
 
-.upload-panel > p {
+.upload-panel>p {
   margin-top: 10px;
 }
 
@@ -2229,11 +2237,9 @@ strong {
   content: '';
   position: absolute;
   inset: 0;
-  background: repeating-radial-gradient(
-    circle,
-    rgba(0, 0, 0, 0) 0 5px,
-    rgba(0, 0, 0, 0.18) 6px 7px
-  );
+  background: repeating-radial-gradient(circle,
+      rgba(0, 0, 0, 0) 0 5px,
+      rgba(0, 0, 0, 0.18) 6px 7px);
   mix-blend-mode: multiply;
 }
 
@@ -2243,6 +2249,7 @@ strong {
   width: 52px;
   height: 52px;
   border-radius: 50%;
+  mix-blend-mode: exclusion;
 }
 
 .browse-card__hole {
@@ -2350,6 +2357,12 @@ strong {
   gap: 20px;
 }
 
+.detail-link {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 .detail-copy .hero__actions {
   justify-content: flex-start;
 }
@@ -2417,12 +2430,15 @@ strong {
 /* ---------- Responsive ---------- */
 
 @media (max-width: 1200px) {
-  .jukebox-theme, .jukebox-debug {
+
+  .jukebox-theme,
+  .jukebox-debug {
     bottom: 96px;
   }
 }
 
 @media (max-width: 900px) {
+
   .team-layout,
   .detail-layout {
     grid-template-columns: minmax(0, 1fr);
@@ -2490,6 +2506,7 @@ strong {
     width: 40px;
     height: 40px;
   }
+
   .jukebox-debug {
     bottom: 132px;
     left: 8px;
@@ -2532,6 +2549,7 @@ strong {
 }
 
 @media (prefers-reduced-motion: reduce) {
+
   *,
   *::before,
   *::after {

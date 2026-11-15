@@ -4,6 +4,7 @@ import nightLights from './nightlights_flat_change_still_8k.00700.jpg'
 import rainSnow from './rain+snow.png'
 import seaTemp from './sea-surface-temp.png'
 import surfaceTemp from './MC01_stage3_GMAO_near_surface_temperature_2048x1024_en.00001_searchweb.png'
+import surfaceWind from './MC02_stage3_GMAO_near_surface_wind_2048x1024_en.00001_searchweb.png'
 
 export interface Dataset {
   id: string
@@ -69,6 +70,15 @@ export const datasets: Dataset[] = [
     date: '2023',
     credit: 'Joseph V. Ardizzone @ NASA Scientific Visualisation Studio',
     image: surfaceTemp,
+  },
+  {
+    id: 'geos-fp-wind',
+    name: 'GEOS-FP Near-Surface Wind Speed',
+    description: '',
+    source: 'https://svs.gsfc.nasa.gov/5148/',
+    date: '2023',
+    credit: 'Joseph V. Ardizzone @ NASA Scientific Visualisation Studio',
+    image: surfaceWind,
   },
 ]
 

@@ -33,11 +33,14 @@ function play(): void {
 
           <div class="detail-copy">
             <p>{{ dataset.description }}</p>
-            <p>{{ dataset.longDescription }}</p>
 
             <dl class="detail-meta">
               <dt>Source</dt>
-              <dd>{{ dataset.source }}</dd>
+              <dd class="detail-link">
+                <a :href="dataset.source" target="_blank" rel="noopener noreferrer">
+                  {{ dataset.source }}
+                </a>
+              </dd>
               <dt>Date</dt>
               <dd>{{ dataset.date }}</dd>
               <dt>Credit</dt>

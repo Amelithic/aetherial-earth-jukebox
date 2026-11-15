@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import Navbar from '@/components/Navbar.vue'
-import earthPlaceholder from '@/assets/images/EarthPlaceholderKurzgesagt.png'
+import earthPlaceholder from '@/assets/images/EarthPlaceholderKurzgesagt.webp'
 </script>
 
 <template>

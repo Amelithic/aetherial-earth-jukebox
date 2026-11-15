@@ -25,10 +25,10 @@ import JukeboxNav from '@/jukebox/components/JukeboxNav.vue'
 import ProcessingOverlay from '@/jukebox/components/ProcessingOverlay.vue'
 import funkyBeatUrl from '@/assets/audio/FunkyBeat.wav'
 import mythologicalBeatUrl from '@/assets/audio/MythologyMode.wav'
-import atlasImage from '@/assets/images/AtlasHoldingTheEarthJukebox.png'
-import atlasOverlay from '@/assets/images/MythologyModeOverlay.png'
-import jukeboxBlank from '@/assets/images/JukeboxBlank.png'
-import volumeDial from '@/assets/images/VolumeDial.png'
+import atlasImage from '@/assets/images/AtlasHoldingTheEarthJukebox.webp'
+import atlasOverlay from '@/assets/images/MythologyModeOverlay.webp'
+import jukeboxBlank from '@/assets/images/JukeboxBlank.webp'
+import volumeDial from '@/assets/images/VolumeDial.webp'
 import { getDatasetById, getNextDataset, getPreviousDataset } from '@/assets/data/datasets'
 import { useAudioEngine } from '@/composables/useAudioEngine'
 import { useImageProcessor } from '@/composables/useImageProcessor'
@@ -63,10 +63,12 @@ const { renderToBuffer, bufferToWav } = useSonification()
 const { playButtonSelect, playKnobTweak } = useJukeboxSounds()
 
 const sonificationOptions = reactive({
-  secondsPerSlice: 0.08,
+  secondsPerSlice: 0.2,
   sampleRate: 44100,
   volume: 0.35,
-  waveform: 'triangle',
+  waveform: 'sine',
+  octaveShift: 1,
+  reverb: false,
 })
 
 const currentDataset = computed(() => getDatasetById(route.params.id as string | undefined))
@@ -541,6 +543,11 @@ onBeforeUnmount(() => {
               <span>{{ sonificationOptions.volume }}</span>
             </div>
             <div class="debug-setting">
+              <span class="debug-key">octave shift:</span>
+              <input type="range" :min="-5" :max="5" :step="1" v-model="sonificationOptions.octaveShift" />
+              <span>{{ sonificationOptions.octaveShift }}</span>
+            </div>
+            <div class="debug-setting">
               <span class="debug-key">waveform:</span>
               <select v-model="sonificationOptions.waveform">
                 <option value="triangle">Triangle</option>
@@ -548,6 +555,10 @@ onBeforeUnmount(() => {
                 <option value="sawtooth">Sawtooth</option>
                 <option value="square">Square</option>
               </select>
+            </div>
+            <div class="debug-setting">
+              <span class="debug-key">reverb:</span>
+              <input type="checkbox" v-model="sonificationOptions.reverb" />
             </div>
             <div class="debug-setting">
               <span class="debug-key">mode:</span>
