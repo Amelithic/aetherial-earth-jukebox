@@ -18,15 +18,23 @@ export function loadImage(src: string): Promise<HTMLImageElement> {
   })
 }
 
-function isNearBlackOrWhite(r: number, g: number, b: number, threshold = 15): boolean {
-  const mean = (r + g + b) / 3;
-  const variance = ((r - mean) ** 2 + (g - mean) ** 2 + (b - mean) ** 2) / 3;
-  const stdDev = Math.sqrt(variance);
-  
-  return stdDev < threshold; // Adjust threshold as needed (e.g., 10-20)
+function isNearBlackOrWhite(r: number, g: number, b: number, threshold = 40): boolean {
+  const max = Math.max(r, g, b)
+  const min = Math.min(r, g, b)
+  const chroma = max - min
+
+  const nearBlack = max < threshold
+  const nearWhite = min > 255 - threshold
+
+  return (nearBlack || nearWhite) && chroma < threshold
 }
 
-export async function sampleImageColumns(src: string, columns = 160, excludeBackground = false): Promise<ImageSlice[]> {
+export async function sampleImageColumns(
+  src: string,
+  columns = 160,
+  excludeBackground = false,
+  backgroundThreshold = 40,
+): Promise<ImageSlice[]> {
   const image = await loadImage(src)
   const canvas = document.createElement('canvas')
   canvas.width = image.naturalWidth
@@ -39,6 +47,7 @@ export async function sampleImageColumns(src: string, columns = 160, excludeBack
   const pixels = context.getImageData(0, 0, canvas.width, canvas.height).data
   const columnCount = Math.max(1, Math.min(columns, canvas.width))
   const columnWidth = canvas.width / columnCount
+  const candidates: ImageSlice[] = []
   const slices: ImageSlice[] = []
 
   for (let column = 0; column < columnCount; column++) {
@@ -66,16 +75,23 @@ export async function sampleImageColumns(src: string, columns = 160, excludeBack
     green /= count
     blue /= count
 
-    if (excludeBackground && isNearBlackOrWhite(red, green, blue)) continue
-
-    slices.push({
+    const slice: ImageSlice = {
       red,
       green,
       blue,
       brightness: (0.2126 * red + 0.7152 * green + 0.0722 * blue) / 255,
       hue: rgbToHue(red, green, blue),
-    })
+    }
+
+    candidates.push(slice)
+
+    if (!excludeBackground || !isNearBlackOrWhite(red, green, blue, backgroundThreshold)) {
+      slices.push(slice)
+    }
   }
 
-  return slices
+  if (slices.length > 0) return slices
+  if (candidates.length > 0) return candidates
+
+  return [{ red: 128, green: 128, blue: 128, brightness: 0.5, hue: 0 }]
 }

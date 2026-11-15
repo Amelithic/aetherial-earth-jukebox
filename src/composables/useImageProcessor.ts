@@ -7,12 +7,17 @@ export function useImageProcessor() {
   const isProcessing = ref(false)
   const error = ref<string | null>(null)
 
-  async function processImage(src: string, columns = 160, excludeBackground = false): Promise<ImageSlice[]> {
+  async function processImage(
+    src: string,
+    columns = 160,
+    excludeBackground = false,
+    backgroundThreshold = 40,
+  ): Promise<ImageSlice[]> {
     isProcessing.value = true
     error.value = null
 
     try {
-      const result = await sampleImageColumns(src, columns, excludeBackground)
+      const result = await sampleImageColumns(src, columns, excludeBackground, backgroundThreshold)
       slices.value = result
       return result
     } catch (cause) {

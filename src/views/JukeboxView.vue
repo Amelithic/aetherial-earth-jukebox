@@ -15,6 +15,7 @@ import {
   PhSkipForward,
   PhUploadSimple,
   PhX,
+  PhSliders
 } from '@phosphor-icons/vue'
 import AudioPlayer from '@/components/AudioPlayer.vue'
 import ImageUploader from '@/components/ImageUploader.vue'
@@ -83,6 +84,10 @@ const audioUrl = ref('')
 const showControls = ref(true)
 const showUpload = ref(false)
 const showDebug = ref(false)
+const sonificationMode = ref<'single' | 'chord' | 'arpeggio'>('single')
+const selectedScale = ref<'major' | 'minor' | 'pentatonicMajor' | 'pentatonicMinor' | 'blues'>('major')
+const excludeBackground = ref(true)
+const backgroundThreshold = ref(40)
 const downloadName = computed(() =>
   customImage.value ? 'custom-image.wav' : `${currentDataset.value.id}.wav`,
 )
@@ -231,8 +236,17 @@ async function processCurrentImage(): Promise<void> {
   pause()
 
   try {
-    const slices = await processImage(activeImage.value, 160, true)
-    const buffer = await renderToBuffer(slices, sonificationOptions)
+    const slices = await processImage(
+      activeImage.value,
+      160,
+      excludeBackground.value,
+      backgroundThreshold.value,
+    )
+    const buffer = await renderToBuffer(slices, {
+      ...sonificationOptions,
+      mode: sonificationMode.value,
+      scale: selectedScale.value,
+    })
     if (token !== runToken) return
 
     if (audioUrl.value) URL.revokeObjectURL(audioUrl.value)
@@ -254,6 +268,19 @@ watch(
 )
 
 watch(speed, (value) => setRate(value))
+
+let reprocessTimer: ReturnType<typeof setTimeout> | null = null
+
+function scheduleReprocess(): void {
+  if (reprocessTimer) clearTimeout(reprocessTimer)
+  reprocessTimer = setTimeout(() => {
+    reprocessTimer = null
+    void processCurrentImage()
+  }, 300)
+}
+
+watch([excludeBackground, backgroundThreshold], scheduleReprocess)
+watch([sonificationOptions, sonificationMode, selectedScale], scheduleReprocess, { deep: true })
 
 function onFileSelected(file: File): void {
   if (customImage.value) URL.revokeObjectURL(customImage.value)
@@ -359,6 +386,7 @@ async function share(): Promise<void> {
 }
 
 onBeforeUnmount(() => {
+  if (reprocessTimer) clearTimeout(reprocessTimer)
   discoMusic.pause()
   mythologyMusic.pause()
   if (audioUrl.value) URL.revokeObjectURL(audioUrl.value)
@@ -491,17 +519,10 @@ onBeforeUnmount(() => {
         </button>
       </div>
 
-      <div class="jukebox-bottom__extra">
-        <button class="jukebox-theme jukebox-theme__debug" type="button" title="Debug settings"
-          aria-label="Debug settings" @click="showDebug = true">
-          <span class="jukebox-theme__badge--debug">DEBUG</span>
-          <PhCaretDown :size="23" weight="fill" />
-        </button>
-
-        <button class="jukebox-theme" type="button" :title="`Theme: ${themeLabel}. Click for ${nextThemeTitle}.`"
-          :aria-label="`Theme: ${themeLabel}. Switch to ${nextThemeTitle} theme.`" @click="cycleTheme">
-          <PhDiscoBall :size="23" weight="fill" />
-          <span v-if="theme !== 'normal'" class="jukebox-theme__badge">{{ themeLabel }}</span>
+<div class="jukebox-bottom__extra">
+        <button class="jukebox-debug" type="button" title="Debug settings"
+          aria-label="Settings" @click="showDebug = true">
+          <PhSliders :size="23" weight="fill" />
         </button>
       </div>
 
@@ -512,15 +533,49 @@ onBeforeUnmount(() => {
             <p class="debug-label">Sonification Options</p>
             <div class="debug-setting">
               <span class="debug-key">secondsPerSlice:</span>
-              <span class="debug-value">{{ sonificationOptions.secondsPerSlice }}</span>
+              <input type="number" v-model.number="sonificationOptions.secondsPerSlice" step="0.01" min="0.01" max="1" />
             </div>
             <div class="debug-setting">
               <span class="debug-key">volume:</span>
-              <span class="debug-value">{{ sonificationOptions.volume }}</span>
+              <input type="range" :min="0.1" :max="1" :step="0.1" v-model="sonificationOptions.volume" />
+              <span>{{ sonificationOptions.volume }}</span>
             </div>
             <div class="debug-setting">
               <span class="debug-key">waveform:</span>
-              <span class="debug-value">{{ sonificationOptions.waveform }}</span>
+              <select v-model="sonificationOptions.waveform">
+                <option value="triangle">Triangle</option>
+                <option value="sine">Sine</option>
+                <option value="sawtooth">Sawtooth</option>
+                <option value="square">Square</option>
+              </select>
+            </div>
+            <div class="debug-setting">
+              <span class="debug-key">mode:</span>
+              <select v-model="sonificationMode">
+                <option value="single">Single</option>
+                <option value="chord">Chord</option>
+                <option value="arpeggio">Arpeggio</option>
+              </select>
+            </div>
+            <div class="debug-setting">
+              <span class="debug-key">scale:</span>
+              <select v-model="selectedScale">
+                <option value="major">Major</option>
+                <option value="minor">Minor</option>
+                <option value="pentatonicMajor">Pentatonic Major</option>
+                <option value="pentatonicMinor">Pentatonic Minor</option>
+                <option value="blues">Blues</option>
+              </select>
+            </div>
+            <p class="debug-label">Background Exclusion</p>
+            <div class="debug-setting">
+              <span class="debug-key">excludeBackground:</span>
+              <input type="checkbox" v-model="excludeBackground" />
+            </div>
+            <div class="debug-setting">
+              <span class="debug-key">backgroundThreshold:</span>
+              <input type="range" min="0" max="100" step="1" v-model.number="backgroundThreshold" />
+              <span>{{ backgroundThreshold }}</span>
             </div>
             <button class="button button--ghost" @click="showDebug = false">Close</button>
           </div>

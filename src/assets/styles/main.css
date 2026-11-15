@@ -562,7 +562,7 @@ strong {
 .jukebox-page {
   position: relative;
   min-height: 100vh;
-  overflow-x: hidden;
+  overflow: hidden;
   background: var(--bg);
 }
 
@@ -604,6 +604,7 @@ strong {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
+  overflow: hidden;
 }
 
 .jukebox-topbar {
@@ -1137,6 +1138,23 @@ strong {
   transform: translateY(-50%);
   white-space: nowrap;
   animation: theme-badge-in 0.2s ease-out;
+}
+
+.jukebox-theme__badge--mode,
+.jukebox-theme__badge--scale {
+  position: absolute;
+  top: 50%;
+  left: calc(100% + 8px);
+  padding: 3px 9px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-pill);
+  background: rgba(25, 24, 22, 0.92);
+  color: var(--offwhite-2);
+  font-family: var(--font-mono), 'SF Mono', 'Monaco', 'Cascadia Mono', 'Roboto Mono', monospace;
+  font-size: 0.6rem;
+  pointer-events: none;
+  transform: translateY(-50%);
+  white-space: nowrap;
 }
 
 .theme-disco {
@@ -1780,6 +1798,84 @@ strong {
   outline-offset: 3px;
 }
 
+.jukebox-debug {
+  position: fixed;
+  bottom: clamp(14px, 2.5vw, 38px);
+  right: clamp(14px, 2.5vw, 38px);
+  z-index: 7;
+  display: grid;
+  place-items: center;
+  width: 46px;
+  height: 46px;
+  padding: 0;
+  border: 1px solid var(--border);
+  border-radius: 50%;
+  background: rgba(56, 42, 57, 0.86);
+  color: var(--text);
+  cursor: pointer;
+  backdrop-filter: blur(6px);
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease,
+    color 0.2s ease,
+    box-shadow 0.2s ease,
+    transform 0.2s ease;
+  font-family: var(--font-mono), 'SF Mono', 'Monaco', 'Cascadia Mono', 'Roboto Mono', monospace;
+  font-size: 0.65rem;
+}
+
+.jukebox-debug:hover {
+  border-color: var(--offwhite-1);
+  background: var(--offwhite-1);
+  color: var(--grey-2);
+  transform: translateY(-2px);
+}
+
+.jukebox-debug:focus-visible {
+  outline: 2px solid var(--water-2);
+  outline-offset: 3px;
+}
+
+/* ---------- Debug button ---------- */
+
+.jukebox-theme__debug {
+  position: fixed;
+  bottom: clamp(14px, 2.5vw, 38px);
+  right: clamp(14px, 2.5vw, 38px);
+  z-index: 7;
+  display: grid;
+  place-items: center;
+  width: 46px;
+  height: 46px;
+  padding: 0;
+  border: 1px solid var(--border);
+  border-radius: 50%;
+  background: rgba(56, 42, 57, 0.86);
+  color: var(--text);
+  cursor: pointer;
+  backdrop-filter: blur(6px);
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease,
+    color 0.2s ease,
+    box-shadow 0.2s ease,
+    transform 0.2s ease;
+  font-family: var(--font-mono), 'SF Mono', 'Monaco', 'Cascadia Mono', 'Roboto Mono', monospace;
+  font-size: 0.65rem;
+}
+
+.jukebox-theme__debug:hover {
+  border-color: var(--offwhite-1);
+  background: var(--offwhite-1);
+  color: var(--grey-2);
+  transform: translateY(-2px);
+}
+
+.jukebox-theme__debug:focus-visible {
+  outline: 2px solid var(--water-2);
+  outline-offset: 3px;
+}
+
 /* ---------- Speed dropdown ---------- */
 
 .speed-control {
@@ -2321,7 +2417,7 @@ strong {
 /* ---------- Responsive ---------- */
 
 @media (max-width: 1200px) {
-  .jukebox-theme {
+  .jukebox-theme, .jukebox-debug {
     bottom: 96px;
   }
 }
@@ -2394,6 +2490,13 @@ strong {
     width: 40px;
     height: 40px;
   }
+  .jukebox-debug {
+    bottom: 132px;
+    left: 8px;
+    width: 40px;
+    height: 40px;
+  }
+
 
   .jukebox-theme__badge {
     left: calc(100% + 6px);
