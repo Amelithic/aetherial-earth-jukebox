@@ -1,0 +1,23 @@
+/*
+ * Placeholder design tokens for phase 1.
+ * Replace these values when the phase 2 styling guide / palette is finalised.
+ */
+:root {
+  --color-bg: #0d1117;
+  --color-surface: #161b22;
+  --color-surface-raised: #1f2630;
+  --color-border: #30363d;
+  --color-text: #e6edf3;
+  --color-muted: #8b949e;
+  --color-accent: #58d68d;
+  --color-accent-strong: #2fbf71;
+  --color-danger: #ff7b72;
+  --color-cabinet: #2a1f14;
+  --color-cabinet-edge: #6b4f2a;
+
+  --radius-sm: 0.4rem;
+  --radius-md: 0.75rem;
+  --radius-lg: 1rem;
+
+  color-scheme: dark;
+}
