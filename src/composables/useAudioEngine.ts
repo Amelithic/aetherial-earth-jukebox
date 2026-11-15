@@ -15,6 +15,7 @@ export function useAudioEngine() {
   const currentTime = ref(0)
   const duration = ref(0)
   const playbackRate = ref(1)
+  const volume = ref(0.8)
 
   const progress = computed(() =>
     duration.value > 0 ? currentTime.value / duration.value : 0,
@@ -50,6 +51,12 @@ export function useAudioEngine() {
     if (audioEl.value) audioEl.value.playbackRate = next
   }
 
+  function setVolume(nextVolume: number): void {
+    const next = Math.min(Math.max(nextVolume, 0), 1)
+    volume.value = next
+    if (audioEl.value) audioEl.value.volume = next
+  }
+
   function onTimeUpdate(): void {
     if (audioEl.value) currentTime.value = audioEl.value.currentTime
   }
@@ -60,6 +67,7 @@ export function useAudioEngine() {
 
     duration.value = Number.isFinite(element.duration) ? element.duration : 0
     element.playbackRate = playbackRate.value
+    element.volume = volume.value
   }
 
   function onPlay(): void {
@@ -86,11 +94,13 @@ export function useAudioEngine() {
     duration,
     progress,
     playbackRate,
+    volume,
     play,
     pause,
     toggle,
     seek,
     setRate,
+    setVolume,
     onTimeUpdate,
     onLoadedMetadata,
     onPlay,

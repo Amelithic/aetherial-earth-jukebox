@@ -98,3 +98,9 @@ export function getNextDataset(id: string): Dataset {
   if (index === -1) return datasets[0]
   return datasets[(index + 1) % datasets.length]
 }
+
+export function getPreviousDataset(id: string): Dataset {
+  const index = datasets.findIndex((dataset) => dataset.id === id)
+  if (index === -1) return datasets[datasets.length - 1]
+  return datasets[(index - 1 + datasets.length) % datasets.length]
+}
