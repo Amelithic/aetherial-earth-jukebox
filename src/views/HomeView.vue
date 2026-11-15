@@ -46,26 +46,10 @@ import conceptImage from '@/assets/images/concept-jukebox.webp'
         </p>
         <p>
           Read more about the challenge at
-          <a href="https://www.spaceappschallenge.org/" target="_blank" rel="noreferrer">
+          <a href="https://www.spaceappschallenge.org/2026/challenges/the-earth-information-jukebox/" target="_blank" rel="noreferrer">
             NASA Space Apps Challenge
           </a>.
         </p>
-      </section>
-
-      <section class="panel">
-        <div class="panel__header">
-          <p class="eyebrow">A look inside</p>
-          <h2>Screenshot</h2>
-          <div class="rule"></div>
-        </div>
-
-        <figure class="screenshot-frame">
-          <img
-            :src="conceptImage"
-            alt="Concept artwork of the Earth's Jukebox, showing a globe inside a retro jukebox cabinet."
-          />
-          <figcaption>Early concept artwork for the jukebox interface.</figcaption>
-        </figure>
       </section>
 
       <section class="panel">
@@ -76,10 +60,10 @@ import conceptImage from '@/assets/images/concept-jukebox.webp'
         </div>
 
         <ol class="steps">
-          <li>Choose a NASA Earth image or upload your own.</li>
+          <li>Choose a NASA Earth image in our browse tab or upload your own.</li>
           <li>We split the image into vertical slices and read the colour of each slice.</li>
           <li>Each colour becomes a pitch, and the slices are rendered into a playable track.</li>
-          <li>Spin the globe, adjust the speed, and download the result as audio.</li>
+          <li>Spin the globe, adjust the speed, and download the result as audio!</li>
         </ol>
       </section>
 

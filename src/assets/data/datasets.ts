@@ -47,7 +47,7 @@ export const datasets: Dataset[] = [
   {
     id: 'rain-snow',
     name: 'Rain and Snow - Worldview Sat Observations',
-    description: '',
+    description: 'This visualisation is using NASA Worldview, demonstrating the cloud movement to represent the rain and snowfall across the globe.',
     source: 'https://worldview.earthdata.nasa.gov/?v=-205.72171420740915,-98.53068072538338,206.78657152152607,106.52986177528524&df=true&kiosk=true&eic=si&l=IMERG_Precipitation_Rate,Land_Mask&lg=false&t=2023-06-11-T16%3A00%3A00Z',
     date: '2026',
     credit: 'NASA Scientific Visualisation Studio - Worldview Sat Observations',
@@ -56,7 +56,7 @@ export const datasets: Dataset[] = [
   {
     id: 'sea-surface-temp',
     name: 'Sea Surface Temperature - Worldview Sat Observations',
-    description: '',
+    description: 'This visualisation is using NASA Worldview, demonstrating the sea surface temperature across the globe.',
     source: 'https://worldview.earthdata.nasa.gov/?v=-207.7830430896525,-98.53068072538338,208.84790040376942,106.52986177528524&df=true&kiosk=true&eic=si&l=Coastlines_15m(opacity=0.71),GHRSST_L4_MUR_Sea_Surface_Temperature(palette=divergent_1)&lg=true&t=2026-11-14-T12%3A00%3A00Z',
     date: '2026',
     credit: 'NASA Scientific Visualisation Studio - Worldview Sat Observations',
@@ -65,7 +65,7 @@ export const datasets: Dataset[] = [
   {
     id: 'geos-fp',
     name: 'GEOS-FP Near-Surface Temperature',
-    description: '',
+    description: 'This visualisation shows the near-surface temperature sampling model fields at about 6 feet above the surface of the Earth. Colours represent temperature, ranging from white at extreme cold to dark red at extreme heat.',
     source: 'https://svs.gsfc.nasa.gov/5147/',
     date: '2023',
     credit: 'Joseph V. Ardizzone @ NASA Scientific Visualisation Studio',
@@ -74,7 +74,7 @@ export const datasets: Dataset[] = [
   {
     id: 'geos-fp-wind',
     name: 'GEOS-FP Near-Surface Wind Speed',
-    description: '',
+    description: 'This visualisation shows the near-surface wind speeds, where dark red represents the strongest force winds.',
     source: 'https://svs.gsfc.nasa.gov/5148/',
     date: '2023',
     credit: 'Joseph V. Ardizzone @ NASA Scientific Visualisation Studio',

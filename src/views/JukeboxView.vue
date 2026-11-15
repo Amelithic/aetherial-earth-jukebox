@@ -34,6 +34,7 @@ import { useAudioEngine } from '@/composables/useAudioEngine'
 import { useImageProcessor } from '@/composables/useImageProcessor'
 import { useJukeboxSounds } from '@/composables/useJukeboxSounds'
 import { useSonification } from '@/composables/useSonification'
+import type { ImageSlice } from '@/utils/imageUtils'
 
 const route = useRoute()
 const router = useRouter()
@@ -59,7 +60,7 @@ const {
 } = useAudioEngine()
 
 const { processImage } = useImageProcessor()
-const { renderToBuffer, bufferToWav } = useSonification()
+const { renderToBuffer, bufferToWav, bufferToMidi } = useSonification()
 const { playButtonSelect, playKnobTweak } = useJukeboxSounds()
 
 const sonificationOptions = reactive({
@@ -81,8 +82,13 @@ const currentTitle = computed(() =>
 const status = ref<'idle' | 'processing' | 'ready' | 'error'>('idle')
 const errorMessage = ref('')
 const shareMessage = ref('')
+const exportMessage = ref('')
 const speed = ref(1)
 const audioUrl = ref('')
+const audioBuffer = ref<AudioBuffer | null>(null)
+const currentSlices = ref<ImageSlice[]>([])
+const visualiserRef = ref<{ getCanvas: () => HTMLCanvasElement | null } | null>(null)
+const isExportingMp4 = ref(false)
 const showControls = ref(true)
 const showUpload = ref(false)
 const showDebug = ref(false)
@@ -90,9 +96,9 @@ const sonificationMode = ref<'single' | 'chord' | 'arpeggio'>('single')
 const selectedScale = ref<'major' | 'minor' | 'pentatonicMajor' | 'pentatonicMinor' | 'blues'>('major')
 const excludeBackground = ref(true)
 const backgroundThreshold = ref(40)
-const downloadName = computed(() =>
-  customImage.value ? 'custom-image.wav' : `${currentDataset.value.id}.wav`,
-)
+const downloadBase = computed(() => (customImage.value ? 'custom-image' : currentDataset.value.id))
+const downloadName = computed(() => `${downloadBase.value}.wav`)
+const midiDownloadName = computed(() => `${downloadBase.value}.mid`)
 
 const volumePercent = computed(() => Math.round(volume.value * 100))
 const knobAngle = computed(() => -135 + volumePercent.value * 1)
@@ -235,6 +241,7 @@ async function processCurrentImage(): Promise<void> {
   status.value = 'processing'
   errorMessage.value = ''
   shareMessage.value = ''
+  exportMessage.value = ''
   pause()
 
   try {
@@ -253,6 +260,8 @@ async function processCurrentImage(): Promise<void> {
 
     if (audioUrl.value) URL.revokeObjectURL(audioUrl.value)
     audioUrl.value = URL.createObjectURL(bufferToWav(buffer))
+    audioBuffer.value = buffer
+    currentSlices.value = slices
     status.value = 'ready'
   } catch (cause) {
     if (token !== runToken) return
@@ -387,6 +396,94 @@ async function share(): Promise<void> {
   }
 }
 
+function triggerDownload(blob: Blob, filename: string): void {
+  const url = URL.createObjectURL(blob)
+  const a = document.createElement('a')
+  a.href = url
+  a.download = filename
+  a.click()
+  URL.revokeObjectURL(url)
+}
+
+function downloadMidi(): void {
+  if (status.value !== 'ready' || currentSlices.value.length === 0) return
+  try {
+    const blob = bufferToMidi(currentSlices.value, {
+      ...sonificationOptions,
+      mode: sonificationMode.value,
+      scale: selectedScale.value,
+    })
+    triggerDownload(blob, midiDownloadName.value)
+    exportMessage.value = 'MIDI downloaded!'
+  } catch (cause) {
+    exportMessage.value = cause instanceof Error ? cause.message : 'MIDI export failed.'
+  }
+}
+
+async function exportMp4(): Promise<void> {
+  if (status.value !== 'ready' || !audioBuffer.value || isExportingMp4.value) return
+  const canvas = visualiserRef.value?.getCanvas()
+  if (!canvas || typeof MediaRecorder === 'undefined') {
+    exportMessage.value = 'MP4 export not supported in this browser.'
+    return
+  }
+
+  isExportingMp4.value = true
+  exportMessage.value = ''
+  let audioCtx: AudioContext | null = null
+  try {
+    const fps = 30
+    const canvasStream = canvas.captureStream(fps)
+    audioCtx = new AudioContext()
+    const destination = audioCtx.createMediaStreamDestination()
+    const source = audioCtx.createBufferSource()
+    source.buffer = audioBuffer.value
+    source.playbackRate.value = speed.value
+    source.connect(destination)
+
+    const tracks = [...canvasStream.getVideoTracks(), ...destination.stream.getAudioTracks()]
+    const stream = new MediaStream(tracks)
+
+    const mimeCandidates = [
+      'video/mp4;codecs=avc1.42E01E,mp4a.40.2',
+      'video/mp4',
+      'video/webm;codecs=vp9,opus',
+      'video/webm;codecs=vp8,opus',
+      'video/webm',
+    ]
+    const mimeType = mimeCandidates.find((m) => MediaRecorder.isTypeSupported(m)) || ''
+    if (!mimeType) throw new Error('No supported video recording format.')
+
+    const recorder = new MediaRecorder(stream, mimeType ? { mimeType } : undefined)
+    const chunks: BlobPart[] = []
+    recorder.ondataavailable = (e) => {
+      if (e.data && e.data.size > 0) chunks.push(e.data)
+    }
+
+    const stopped = new Promise<void>((resolve, reject) => {
+      recorder.onstop = () => resolve()
+      recorder.onerror = () => reject(new Error('Recording failed.'))
+    })
+
+    recorder.start()
+    source.start()
+    source.onended = () => {
+      if (recorder.state !== 'inactive') recorder.stop()
+    }
+
+    await stopped
+    const blob = new Blob(chunks, { type: mimeType || 'video/webm' })
+    const ext = mimeType.includes('mp4') ? 'mp4' : 'webm'
+    triggerDownload(blob, `${downloadBase.value}.${ext}`)
+    exportMessage.value = `${ext.toUpperCase()} exported!`
+  } catch (cause) {
+    exportMessage.value = cause instanceof Error ? cause.message : 'MP4 export failed.'
+  } finally {
+    if (audioCtx) void audioCtx.close()
+    isExportingMp4.value = false
+  }
+}
+
 onBeforeUnmount(() => {
   if (reprocessTimer) clearTimeout(reprocessTimer)
   discoMusic.pause()
@@ -431,7 +528,7 @@ onBeforeUnmount(() => {
           <img class="jukebox-cabinet__base" :src="jukeboxBlank" alt="Retro jukebox cabinet" draggable="false" />
 
           <div class="jukebox-cabinet__screen">
-            <Visualiser :texture-url="activeImage" />
+            <Visualiser ref="visualiserRef" :texture-url="activeImage" />
           </div>
 
           <p class="jukebox-cabinet__track">{{ currentTitle }}</p>
@@ -474,13 +571,15 @@ onBeforeUnmount(() => {
           <PhFileAudio :size="21" weight="fill" />
         </button>
 
-        <button class="jukebox-rack__button" type="button" disabled title="MP4 export coming soon"
-          aria-label="MP4 export coming soon" data-label="MP4 coming soon">
+        <button class="jukebox-rack__button" type="button" :disabled="status !== 'ready' || isExportingMp4"
+          :title="isExportingMp4 ? 'Exporting video…' : 'Export MP4/WebM video'"
+          :aria-label="isExportingMp4 ? 'Exporting video' : 'Export MP4 or WebM video'"
+          :data-label="isExportingMp4 ? 'Exporting…' : 'Export Video'" @click="exportMp4">
           <PhFilmStrip :size="21" weight="fill" />
         </button>
 
-        <button class="jukebox-rack__button" type="button" disabled title="MIDI export coming soon"
-          aria-label="MIDI export coming soon" data-label="MIDI coming soon">
+        <button class="jukebox-rack__button" type="button" :disabled="status !== 'ready'"
+          title="Download MIDI" aria-label="Download MIDI" data-label="Download MIDI" @click="downloadMidi">
           <PhMusicNotes :size="21" weight="fill" />
         </button>
 
@@ -497,6 +596,7 @@ onBeforeUnmount(() => {
         </button>
 
         <p v-if="shareMessage" class="share-message">{{ shareMessage }}</p>
+        <p v-if="exportMessage" class="share-message">{{ exportMessage }}</p>
       </aside>
 
       <div class="jukebox-bottom">

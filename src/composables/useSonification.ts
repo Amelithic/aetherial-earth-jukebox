@@ -1,6 +1,6 @@
 import type { ImageSlice } from '@/utils/imageUtils'
 import { brightnessToFrequency, brightnessToScaleDegree } from '@/utils/mappingUtils'
-import { encodeWav } from '@/utils/audioUtils'
+import { encodeMidi, encodeWav, type MidiNoteEvent } from '@/utils/audioUtils'
 
 export interface SonificationOptions {
   secondsPerSlice?: number
@@ -205,5 +205,61 @@ export function useSonification() {
     return encodeWav(buffer)
   }
 
-  return { renderToBuffer, bufferToWav }
+  function frequencyToMidi(freq: number): number {
+    return Math.round(69 + 12 * Math.log2(freq / 440))
+  }
+
+  function slicesToMidiEvents(
+    slices: ImageSlice[],
+    options: SonificationOptions = {},
+  ): MidiNoteEvent[] {
+    const sourceSlices = slices.length > 0 ? slices : [FALLBACK_SLICE]
+    const secondsPerSlice = options.secondsPerSlice ?? 0.08
+    const mode = options.mode ?? 'single'
+    const scale = (options.scale ?? 'major') as keyof typeof SCALE_PRESETS
+    const octaveShift = options.octaveShift ?? 1
+    const events: MidiNoteEvent[] = []
+
+    if (mode === 'chord') {
+      sourceSlices.forEach((slice, index) => {
+        const start = index * secondsPerSlice
+        const dur = secondsPerSlice * 0.9
+        const baseFreq =
+          brightnessToFrequency(slice.brightness, slice.hue, scale) * Math.pow(2, octaveShift)
+        ;[0, 4, 7].forEach((interval) => {
+          events.push({
+            time: start,
+            duration: dur,
+            midi: frequencyToMidi(baseFreq * Math.pow(2, interval / 12)),
+            velocity: 90,
+          })
+        })
+      })
+    } else if (mode === 'arpeggio') {
+      sourceSlices.forEach((slice, index) => {
+        const start = index * secondsPerSlice
+        const dur = secondsPerSlice * 0.8
+        const degree = brightnessToScaleDegree(slice.brightness, scale)
+        const semitones = degree + Math.round((slice.hue / 360) * 3)
+        const frequency = 110 * Math.pow(2, octaveShift) * Math.pow(2, semitones / 12)
+        events.push({ time: start, duration: dur, midi: frequencyToMidi(frequency), velocity: 90 })
+      })
+    } else {
+      sourceSlices.forEach((slice, index) => {
+        const start = index * secondsPerSlice
+        const dur = secondsPerSlice * 0.95
+        const baseFreq =
+          brightnessToFrequency(slice.brightness, slice.hue, scale) * Math.pow(2, octaveShift)
+        events.push({ time: start, duration: dur, midi: frequencyToMidi(baseFreq), velocity: 90 })
+      })
+    }
+
+    return events
+  }
+
+  function bufferToMidi(slices: ImageSlice[], options: SonificationOptions = {}): Blob {
+    return encodeMidi(slicesToMidiEvents(slices, options))
+  }
+
+  return { renderToBuffer, bufferToWav, bufferToMidi, slicesToMidiEvents }
 }

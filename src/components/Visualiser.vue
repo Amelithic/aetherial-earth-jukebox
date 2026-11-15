@@ -6,6 +6,11 @@ const props = defineProps<{ textureUrl: string }>()
 
 const container = ref<HTMLDivElement | null>(null)
 
+defineExpose({
+  getCanvas: () => renderer?.domElement ?? null,
+  getContainer: () => container.value,
+})
+
 let renderer: THREE.WebGLRenderer | null = null
 let scene: THREE.Scene | null = null
 let camera: THREE.PerspectiveCamera | null = null

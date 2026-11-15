@@ -476,6 +476,7 @@ strong {
 
 .team-photo {
   position: relative;
+  object-fit: cover;
   display: grid;
   place-items: center;
   min-height: 240px;

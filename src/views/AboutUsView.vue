@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import Navbar from '@/components/Navbar.vue'
-import earthPlaceholder from '@/assets/images/EarthPlaceholderKurzgesagt.webp'
+import teamImg from '/images/team.jpg'
 </script>
 
 <template>
@@ -16,25 +16,22 @@ import earthPlaceholder from '@/assets/images/EarthPlaceholderKurzgesagt.webp'
         </div>
 
         <div class="team-layout">
-          <figure class="team-photo">
-            <img class="team-photo__placeholder" :src="earthPlaceholder" alt="" />
-            <figcaption>Team photo coming soon</figcaption>
-          </figure>
+          <img class="team-photo" :src="teamImg" alt="" />
 
           <div class="team-card">
             <h2>Who we are</h2>
             <ul class="team-list">
               <li>
-                <strong>Name</strong>
-                <span>Role</span>
+                <strong>Amelie</strong>
+                <span>Web Development / Software</span>
               </li>
               <li>
-                <strong>Name</strong>
-                <span>Role</span>
+                <strong>Joey</strong>
+                <span>Audio / Graphic Designer</span>
               </li>
               <li>
-                <strong>Name</strong>
-                <span>Role</span>
+                <strong>Adam</strong>
+                <span>User Experience / Ideation</span>
               </li>
             </ul>
           </div>
@@ -42,25 +39,21 @@ import earthPlaceholder from '@/assets/images/EarthPlaceholderKurzgesagt.webp'
 
         <div class="prose">
           <p>
-            We are a team taking part in the NASA Space Apps Challenge. Add a short description of
-            where the team is from, what we are building, and why we chose this challenge.
+            We are a team of rural Irish students, interested in software, sound engineering and product design. We had a deep interest in space technology, and created this project as a fun way to work together on an idea, working from home!
           </p>
           <p>
-            We build with Vue, Three.js, and the Web Audio API to turn Earth observation imagery
-            into a record collection you can listen to.
+            We built this site with Vue, Three.js, and the Web Audio API to turn Earth observation imagery
+            into a record collection you can listen to!
           </p>
         </div>
 
         <div class="about-links">
-          <a class="button button--ghost" href="https://github.com/" target="_blank" rel="noreferrer">
+          <a class="button button--ghost" href="https://github.com/Amelithic/aetherial-earth-jukebox" target="_blank" rel="noreferrer">
             GitHub
-          </a>
-          <a class="button button--ghost" href="https://devpost.com/" target="_blank" rel="noreferrer">
-            Devpost
           </a>
           <a
             class="button button--ghost"
-            href="https://www.spaceappschallenge.org/"
+            href="https://www.spaceappschallenge.org/2026/find-a-team/aetherial/"
             target="_blank"
             rel="noreferrer"
           >
