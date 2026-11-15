@@ -16,7 +16,7 @@ function showDetails(id: string): void {
 </script>
 
 <template>
-  <div class="page">
+  <div class="page space-main">
     <div class="page-topbar">
       <JukeboxNav :show-browse="false" />
     </div>

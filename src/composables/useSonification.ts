@@ -6,7 +6,7 @@ export interface SonificationOptions {
   secondsPerSlice?: number
   sampleRate?: number
   volume?: number
-  waveform?: OscillatorType
+  waveform?: string
 }
 
 export function useSonification() {
@@ -33,7 +33,7 @@ export function useSonification() {
       const oscillator = context.createOscillator()
       const envelope = context.createGain()
 
-      oscillator.type = waveform
+      oscillator.type = waveform as OscillatorType
       oscillator.frequency.value = brightnessToFrequency(slice.brightness, slice.hue)
 
       envelope.gain.setValueAtTime(0.0001, start)

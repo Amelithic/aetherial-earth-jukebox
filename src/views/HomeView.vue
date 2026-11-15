@@ -1,13 +1,14 @@
 <script setup lang="ts">
 import { RouterLink } from 'vue-router'
 import Navbar from '@/components/Navbar.vue'
+import Footer from '@/components/Footer.vue'
 import aetherialLogo from '@/assets/images/AetherialLogo.png'
 import jukeboxLogo from '@/assets/images/EarthsJukeboxLogo.png'
 import conceptImage from '@/assets/images/concept-jukebox.png'
 </script>
 
 <template>
-  <div class="page">
+  <div class="page space-main">
     <Navbar />
 
     <main class="container container--narrow page-body">
@@ -87,4 +88,5 @@ import conceptImage from '@/assets/images/concept-jukebox.png'
       </div>
     </main>
   </div>
+  <Footer />
 </template>

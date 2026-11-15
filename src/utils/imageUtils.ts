@@ -18,7 +18,15 @@ export function loadImage(src: string): Promise<HTMLImageElement> {
   })
 }
 
-export async function sampleImageColumns(src: string, columns = 160): Promise<ImageSlice[]> {
+function isNearBlackOrWhite(r: number, g: number, b: number, threshold = 15): boolean {
+  const mean = (r + g + b) / 3;
+  const variance = ((r - mean) ** 2 + (g - mean) ** 2 + (b - mean) ** 2) / 3;
+  const stdDev = Math.sqrt(variance);
+  
+  return stdDev < threshold; // Adjust threshold as needed (e.g., 10-20)
+}
+
+export async function sampleImageColumns(src: string, columns = 160, excludeBackground = false): Promise<ImageSlice[]> {
   const image = await loadImage(src)
   const canvas = document.createElement('canvas')
   canvas.width = image.naturalWidth
@@ -57,6 +65,8 @@ export async function sampleImageColumns(src: string, columns = 160): Promise<Im
     red /= count
     green /= count
     blue /= count
+
+    if (excludeBackground && isNearBlackOrWhite(red, green, blue)) continue
 
     slices.push({
       red,

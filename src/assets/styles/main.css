@@ -130,6 +130,37 @@ strong {
   min-height: 100vh;
 }
 
+.space-main {
+  position: relative;
+  min-height: 100vh;
+  width: 100%;
+  
+  /* 1. Core background properties */
+  background-image: url('/images/nasa-Yj1M5riCKk4-unsplash.jpg'); /* Note: see path tip below */
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed; /* Optional: creates a smooth parallax scroll effect */
+  background-color: #08060b; /* Fallback deep space color while loading */
+}
+
+/* 2. Cosmic vignette / dark overlay for better text contrast */
+.space-main::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background: 
+    rgba(8, 6, 11, 0.75);
+  pointer-events: none;
+}
+
+/* 3. Ensure your page content sits safely on top of the overlay */
+.space-main > * {
+  position: relative;
+  z-index: 1;
+}
+
 .container {
   width: min(var(--page-width), 92vw);
   margin: 0 auto;
@@ -199,7 +230,7 @@ strong {
 
 .rule {
   width: 72px;
-  height: 6px;
+  height: 3px;
   border-radius: var(--radius-pill);
   background: var(--purple-1);
   box-shadow: 0 0 0 1px rgba(248, 248, 229, 0.05);
@@ -218,7 +249,7 @@ strong {
   color: var(--text);
   font-family: var(--font-display);
   font-size: 0.92rem;
-  letter-spacing: 0.03em;
+  letter-spacing: 0.05em;
   padding: 0.68rem 1.35rem;
   text-decoration: none;
   cursor: pointer;
@@ -285,6 +316,11 @@ strong {
 .site-nav__logo-img {
   width: auto;
   height: 42px;
+}
+
+.site-nav__logo-img-small {
+  width: auto;
+  height: 24px;
 }
 
 .site-nav__links {
@@ -1633,6 +1669,117 @@ strong {
   cursor: pointer;
 }
 
+/* ---------- Debug panel ---------- */
+
+.debug-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(4px);
+}
+
+.debug-panel {
+  position: fixed;
+  bottom: clamp(100px, 5vw, 200px);
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(400px, 90vw);
+  max-height: 70vh;
+  overflow: auto;
+  padding: 24px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+  box-shadow: var(--shadow);
+  backdrop-filter: blur(10px);
+  font-family: var(--font-mono), 'SF Mono', 'Monaco', 'Cascadia Mono', 'Roboto Mono', monospace;
+  color: var(--text);
+  font-size: 0.75rem;
+  line-height: 1.6;
+}
+
+.debug-panel h3 {
+  margin: 0 0 16px;
+  font-family: var(--font-display);
+  font-size: 1rem;
+  color: var(--accent);
+  letter-spacing: 0.02em;
+}
+
+.debug-label {
+  display: block;
+  margin: 0 0 8px;
+  color: var(--offwhite-2);
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.debug-setting {
+  margin: 8px 0;
+  display: flex;
+  justify-content: space-between;
+}
+
+.debug-key {
+  color: var(--offwhite-2);
+  font-family: var(--font-mono), 'SF Mono', 'Monaco', 'Cascadia Mono', 'Roboto Mono', monospace;
+}
+
+.debug-value {
+  color: var(--text);
+  font-family: var(--font-mono), 'SF Mono', 'Monaco', 'Cascadia Mono', 'Roboto Mono', monospace;
+  background: rgba(25, 24, 22, 0.5);
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.debug-close {
+  margin-top: 16px;
+  align-self: flex-end;
+}
+
+/* ---------- Debug button ---------- */
+
+.jukebox-theme__debug {
+  position: fixed;
+  bottom: clamp(14px, 2.5vw, 38px);
+  right: clamp(14px, 2.5vw, 38px);
+  z-index: 7;
+  display: grid;
+  place-items: center;
+  width: 46px;
+  height: 46px;
+  padding: 0;
+  border: 1px solid var(--border);
+  border-radius: 50%;
+  background: rgba(56, 42, 57, 0.86);
+  color: var(--text);
+  cursor: pointer;
+  backdrop-filter: blur(6px);
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease,
+    color 0.2s ease,
+    box-shadow 0.2s ease,
+    transform 0.2s ease;
+  font-family: var(--font-mono), 'SF Mono', 'Monaco', 'Cascadia Mono', 'Roboto Mono', monospace;
+  font-size: 0.65rem;
+}
+
+.jukebox-theme__debug:hover {
+  border-color: var(--offwhite-1);
+  background: var(--offwhite-1);
+  color: var(--grey-2);
+  transform: translateY(-2px);
+}
+
+.jukebox-theme__debug:focus-visible {
+  outline: 2px solid var(--water-2);
+  outline-offset: 3px;
+}
+
 /* ---------- Speed dropdown ---------- */
 
 .speed-control {
@@ -2212,11 +2359,11 @@ strong {
   }
 
   .hero__brand {
-    width: 100%;
+    width: 67%;
   }
 
   .hero__product {
-    width: 92%;
+    width: 40%;
   }
 
   .jukebox-topbar {

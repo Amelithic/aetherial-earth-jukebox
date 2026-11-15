@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onBeforeUnmount, ref, watch } from 'vue'
+import { computed, onBeforeUnmount, reactive, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import {
   PhCaretDown,
@@ -61,6 +61,13 @@ const { processImage } = useImageProcessor()
 const { renderToBuffer, bufferToWav } = useSonification()
 const { playButtonSelect, playKnobTweak } = useJukeboxSounds()
 
+const sonificationOptions = reactive({
+  secondsPerSlice: 0.08,
+  sampleRate: 44100,
+  volume: 0.35,
+  waveform: 'triangle',
+})
+
 const currentDataset = computed(() => getDatasetById(route.params.id as string | undefined))
 const customImage = ref<string | null>(null)
 const activeImage = computed(() => customImage.value ?? currentDataset.value.image)
@@ -75,6 +82,7 @@ const speed = ref(1)
 const audioUrl = ref('')
 const showControls = ref(true)
 const showUpload = ref(false)
+const showDebug = ref(false)
 const downloadName = computed(() =>
   customImage.value ? 'custom-image.wav' : `${currentDataset.value.id}.wav`,
 )
@@ -223,8 +231,8 @@ async function processCurrentImage(): Promise<void> {
   pause()
 
   try {
-    const slices = await processImage(activeImage.value, 160)
-    const buffer = await renderToBuffer(slices, { secondsPerSlice: 0.08 })
+    const slices = await processImage(activeImage.value, 160, true)
+    const buffer = await renderToBuffer(slices, sonificationOptions)
     if (token !== runToken) return
 
     if (audioUrl.value) URL.revokeObjectURL(audioUrl.value)
@@ -482,6 +490,42 @@ onBeforeUnmount(() => {
           Show controls
         </button>
       </div>
+
+      <div class="jukebox-bottom__extra">
+        <button class="jukebox-theme jukebox-theme__debug" type="button" title="Debug settings"
+          aria-label="Debug settings" @click="showDebug = true">
+          <span class="jukebox-theme__badge--debug">DEBUG</span>
+          <PhCaretDown :size="23" weight="fill" />
+        </button>
+
+        <button class="jukebox-theme" type="button" :title="`Theme: ${themeLabel}. Click for ${nextThemeTitle}.`"
+          :aria-label="`Theme: ${themeLabel}. Switch to ${nextThemeTitle} theme.`" @click="cycleTheme">
+          <PhDiscoBall :size="23" weight="fill" />
+          <span v-if="theme !== 'normal'" class="jukebox-theme__badge">{{ themeLabel }}</span>
+        </button>
+      </div>
+
+      <Transition name="fade">
+        <div v-if="showDebug" class="debug-overlay" @click.self="showDebug = false">
+          <div class="debug-panel">
+            <h3>Debug Panel</h3>
+            <p class="debug-label">Sonification Options</p>
+            <div class="debug-setting">
+              <span class="debug-key">secondsPerSlice:</span>
+              <span class="debug-value">{{ sonificationOptions.secondsPerSlice }}</span>
+            </div>
+            <div class="debug-setting">
+              <span class="debug-key">volume:</span>
+              <span class="debug-value">{{ sonificationOptions.volume }}</span>
+            </div>
+            <div class="debug-setting">
+              <span class="debug-key">waveform:</span>
+              <span class="debug-value">{{ sonificationOptions.waveform }}</span>
+            </div>
+            <button class="button button--ghost" @click="showDebug = false">Close</button>
+          </div>
+        </div>
+      </Transition>
     </div>
 
     <div v-if="theme === 'disco'" class="disco-confetti" aria-hidden="true">
