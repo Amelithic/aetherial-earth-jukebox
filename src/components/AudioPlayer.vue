@@ -2,6 +2,7 @@
 import {
   PhPause,
   PhPlay,
+  PhRepeat,
   PhSkipBack,
   PhSkipForward,
   PhSpeakerHigh,
@@ -15,6 +16,7 @@ defineProps<{
   currentTime: number
   duration: number
   volume: number
+  loop: boolean
   disabled?: boolean
 }>()
 
@@ -23,6 +25,7 @@ const emit = defineEmits<{
   seek: [time: number]
   previous: []
   next: []
+  'update:loop': [value: boolean]
   'update:volume': [value: number]
 }>()
 
@@ -67,6 +70,18 @@ function onVolume(event: Event): void {
         @click="emit('next')"
       >
         <PhSkipForward :size="17" weight="fill" />
+      </button>
+
+      <button
+        class="audio-player__loop"
+        :class="{ 'is-active': loop }"
+        type="button"
+        :title="loop ? 'Disable loop' : 'Loop track'"
+        :aria-label="loop ? 'Disable loop' : 'Loop track'"
+        :aria-pressed="loop"
+        @click="emit('update:loop', !loop)"
+      >
+        <PhRepeat :size="16" weight="bold" />
       </button>
     </div>
 

@@ -16,7 +16,7 @@ function play(): void {
 
 <template>
   <div class="page">
-    <div class="container container--browse page-topbar">
+    <div class="page-topbar">
       <JukeboxNav :show-browse="false" />
     </div>
 
