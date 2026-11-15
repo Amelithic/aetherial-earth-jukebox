@@ -4,7 +4,6 @@ import Navbar from '@/components/Navbar.vue'
 import Footer from '@/components/Footer.vue'
 import aetherialLogo from '@/assets/images/AetherialLogo.webp'
 import jukeboxLogo from '@/assets/images/EarthsJukeboxLogo.webp'
-import conceptImage from '@/assets/images/concept-jukebox.webp'
 </script>
 
 <template>
