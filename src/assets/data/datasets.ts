@@ -51,6 +51,42 @@ export const datasets: Dataset[] = [
     credit: 'Sample data',
     image: exampleImage,
   },
+  {
+    id: 'sea-ice',
+    name: 'Sea Ice',
+    description: 'A fourth placeholder record for the Browse gallery.',
+    longDescription:
+      'Placeholder metadata for a future sea-ice dataset. The shared sample image keeps the ' +
+      'gallery and sonification flow testable until the real asset is ready.',
+    source: 'NASA Space Apps Earth Jukebox sample data',
+    date: '2026',
+    credit: 'Sample data',
+    image: exampleImage,
+  },
+  {
+    id: 'aerosols',
+    name: 'Aerosols',
+    description: 'A fifth placeholder record for the Browse gallery.',
+    longDescription:
+      'Placeholder metadata for a future atmospheric aerosols dataset. Replace this entry when ' +
+      'the final imagery and credits are available.',
+    source: 'NASA Space Apps Earth Jukebox sample data',
+    date: '2026',
+    credit: 'Sample data',
+    image: exampleImage,
+  },
+  {
+    id: 'city-lights',
+    name: 'City Lights',
+    description: 'A sixth placeholder record for the Browse gallery.',
+    longDescription:
+      'Placeholder metadata for a future night-lights dataset. This fills out the 3 by 2 ' +
+      'gallery layout from the wireframe.',
+    source: 'NASA Space Apps Earth Jukebox sample data',
+    date: '2026',
+    credit: 'Sample data',
+    image: exampleImage,
+  },
 ]
 
 export function getDatasetById(id?: string | null): Dataset {

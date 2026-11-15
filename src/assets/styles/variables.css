@@ -1,23 +1,39 @@
-/*
- * Placeholder design tokens for phase 1.
- * Replace these values when the phase 2 styling guide / palette is finalised.
- */
+/* Design tokens from docs/styles/Docs/style.md */
 :root {
-  --color-bg: #0d1117;
-  --color-surface: #161b22;
-  --color-surface-raised: #1f2630;
-  --color-border: #30363d;
-  --color-text: #e6edf3;
-  --color-muted: #8b949e;
-  --color-accent: #58d68d;
-  --color-accent-strong: #2fbf71;
-  --color-danger: #ff7b72;
-  --color-cabinet: #2a1f14;
-  --color-cabinet-edge: #6b4f2a;
+  --purple-1: #382a39;
+  --purple-2: #2e2b38;
+  --grey-1: #383631;
+  --grey-2: #191816;
+  --offwhite-1: #f8f8e5;
+  --offwhite-2: #d6d6c2;
 
-  --radius-sm: 0.4rem;
-  --radius-md: 0.75rem;
-  --radius-lg: 1rem;
+  --water-1: #8bbffa;
+  --land-1: #2fb15c;
+  --water-2: #90dad1;
+  --land-2: #71bc8a;
+
+  --bg: var(--grey-2);
+  --surface: var(--purple-2);
+  --surface-accent: var(--purple-1);
+  --border: var(--grey-1);
+  --text: var(--offwhite-1);
+  --text-body: var(--offwhite-2);
+  --accent: var(--water-2);
+  --accent-2: var(--land-2);
+
+  --radius-xs: 12px;
+  --radius-sm: 18px;
+  --radius-md: 24px;
+  --radius-lg: 32px;
+  --radius-pill: 999px;
+
+  --page-width: 1120px;
+  --narrow-width: 780px;
+  --section-gap: 60px;
+  --shadow: 0 20px 50px rgba(0, 0, 0, 0.35);
+
+  --font-display: 'Guanine', 'Trebuchet MS', sans-serif;
+  --font-body: 'Fraunces', Georgia, 'Times New Roman', serif;
 
   color-scheme: dark;
 }

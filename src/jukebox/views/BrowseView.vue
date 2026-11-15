@@ -17,19 +17,27 @@ function showDetails(id: string): void {
 
 <template>
   <div class="page">
-    <JukeboxNav />
+    <div class="container container--browse page-topbar">
+      <JukeboxNav :show-browse="false" />
+    </div>
 
-    <main class="container page-body stack">
-      <h1>Browse data...</h1>
+    <main class="container container--browse page-body">
+      <header>
+        <p class="eyebrow">Record collection</p>
+        <h1>Browse data...</h1>
+        <div class="rule"></div>
+      </header>
 
-      <section class="gallery" aria-label="Available records">
-        <BrowseCard
-          v-for="dataset in datasets"
-          :key="dataset.id"
-          :dataset="dataset"
-          @play="play"
-          @details="showDetails"
-        />
+      <section class="panel gallery-panel" aria-label="Available records">
+        <div class="gallery">
+          <BrowseCard
+            v-for="dataset in datasets"
+            :key="dataset.id"
+            :dataset="dataset"
+            @play="play"
+            @details="showDetails"
+          />
+        </div>
       </section>
     </main>
   </div>

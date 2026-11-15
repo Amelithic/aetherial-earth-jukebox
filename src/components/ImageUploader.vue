@@ -11,8 +11,8 @@ function onChange(event: Event): void {
 </script>
 
 <template>
-  <label class="image-uploader card stack">
-    <span>Sonify your own image (optional)</span>
+  <label class="image-uploader">
+    <span class="image-uploader__label">Upload image</span>
     <input type="file" accept="image/*" @change="onChange" />
   </label>
 </template>

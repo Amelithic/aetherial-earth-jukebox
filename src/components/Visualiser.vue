@@ -147,7 +147,5 @@ onBeforeUnmount(() => {
     @pointermove="onPointerMove"
     @pointerup="onPointerUp"
     @pointerleave="onPointerUp"
-  >
-    <span class="visualiser__hint muted">Drag to rotate</span>
-  </div>
+  ></div>
 </template>

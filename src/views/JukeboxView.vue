@@ -7,6 +7,8 @@ import SonificationControls from '@/components/SonificationControls.vue'
 import Visualiser from '@/components/Visualiser.vue'
 import JukeboxNav from '@/jukebox/components/JukeboxNav.vue'
 import ProcessingOverlay from '@/jukebox/components/ProcessingOverlay.vue'
+import jukeboxBlank from '@/assets/images/JukeboxBlank.png'
+import volumeDial from '@/assets/images/VolumeDial.png'
 import { getDatasetById, getNextDataset } from '@/assets/data/datasets'
 import { useAudioEngine } from '@/composables/useAudioEngine'
 import { useImageProcessor } from '@/composables/useImageProcessor'
@@ -43,6 +45,7 @@ const errorMessage = ref('')
 const shareMessage = ref('')
 const speed = ref(1)
 const audioUrl = ref('')
+const showControls = ref(true)
 const downloadName = computed(() => `${currentDataset.value.id}.wav`)
 
 let runToken = 0
@@ -115,27 +118,109 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <div class="jukebox-page" :style="{ backgroundImage: `url(${activeImage})` }">
-    <div class="jukebox-page__scrim">
-      <JukeboxNav />
+  <div class="jukebox-page">
+    <div class="jukebox-page__bg" :style="{ backgroundImage: `url(${activeImage})` }"></div>
+    <div class="jukebox-page__tint"></div>
 
-      <main class="container jukebox-layout">
-        <section class="jukebox-cabinet">
-          <div class="jukebox-cabinet__top">
-            <span class="muted">Now playing</span>
-            <div
-              class="jukebox-cabinet__record"
-              :style="{ backgroundImage: `url(${activeImage})` }"
-              aria-hidden="true"
-            >
-              <span class="jukebox-cabinet__hole"></span>
-            </div>
+    <div class="jukebox-shell">
+      <header class="jukebox-topbar">
+        <JukeboxNav :show-browse="true" />
+
+        <div class="now-playing">
+          <span
+            class="now-playing__disc"
+            :class="{ 'is-spinning': isPlaying }"
+            :style="{ backgroundImage: `url(${activeImage})` }"
+            aria-hidden="true"
+          ></span>
+          <div>
+            <p class="now-playing__label">Now playing</p>
+            <p class="now-playing__name">{{ currentDataset.name }}</p>
           </div>
+        </div>
+      </header>
 
-          <Visualiser :texture-url="activeImage" />
+      <main class="jukebox-stage">
+        <div class="jukebox-cabinet">
+          <img
+            class="jukebox-cabinet__base"
+            :src="jukeboxBlank"
+            alt="Retro jukebox cabinet"
+            draggable="false"
+          />
+
+          <div class="jukebox-cabinet__screen">
+            <Visualiser :texture-url="activeImage" />
+          </div>
 
           <p class="jukebox-cabinet__track">{{ currentDataset.name }}</p>
 
+          <button
+            class="jukebox-knob"
+            type="button"
+            title="Load the next record"
+            aria-label="Load the next record"
+            :disabled="status === 'processing'"
+            @click="goToNextDataset"
+          >
+            <img :src="volumeDial" alt="" draggable="false" />
+          </button>
+
+          <button
+            class="jukebox-play"
+            type="button"
+            :disabled="status !== 'ready' || !audioUrl"
+            :aria-label="isPlaying ? 'Pause' : 'Play'"
+            @click="toggle"
+          >
+            <span v-if="isPlaying" class="pause-icon" aria-hidden="true">
+              <i></i>
+              <i></i>
+            </span>
+            <span v-else class="play-icon" aria-hidden="true"></span>
+          </button>
+        </div>
+
+        <aside class="jukebox-downloads" aria-label="Download and share">
+          <a
+            v-if="audioUrl"
+            class="jukebox-download"
+            :href="audioUrl"
+            :download="downloadName"
+            title="Download WAV"
+          >
+            WAV
+          </a>
+          <button v-else class="jukebox-download" type="button" disabled title="Download WAV">
+            WAV
+          </button>
+
+          <button class="jukebox-download" type="button" disabled title="MP4 export coming soon">
+            MP4
+          </button>
+          <button class="jukebox-download" type="button" disabled title="MIDI export coming soon">
+            MIDI
+          </button>
+
+          <button
+            class="jukebox-download"
+            type="button"
+            title="Share this record"
+            aria-label="Share this record"
+            @click="share"
+          >
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M14 3h7v7h-2V6.41l-9.29 9.3-1.42-1.42 9.3-9.29H14V3z" />
+              <path d="M5 5h6V3H3v18h18v-8h-2v6H5V5z" />
+            </svg>
+          </button>
+
+          <p v-if="shareMessage" class="share-message">{{ shareMessage }}</p>
+        </aside>
+      </main>
+
+      <div class="jukebox-bottom">
+        <div v-if="showControls" class="jukebox-controls">
           <AudioPlayer
             :is-playing="isPlaying"
             :current-time="currentTime"
@@ -145,64 +230,48 @@ onBeforeUnmount(() => {
             @seek="seek"
           />
 
-          <button
-            class="button"
-            type="button"
-            :disabled="status === 'processing'"
-            @click="goToNextDataset"
-          >
-            Next record
-          </button>
-        </section>
-
-        <aside class="jukebox-tools stack">
           <SonificationControls
             :speed="speed"
-            :is-playing="isPlaying"
-            :disabled="status !== 'ready' || !audioUrl"
+            :disabled="status !== 'ready'"
             @update:speed="speed = $event"
-            @toggle="toggle"
           />
-
-          <div class="card stack">
-            <h2 class="section__title">Download</h2>
-            <div class="download-grid">
-              <a v-if="audioUrl" class="button" :href="audioUrl" :download="downloadName">
-                Download WAV
-              </a>
-              <button v-else class="button" type="button" disabled>Download WAV</button>
-              <button class="button" type="button" disabled title="Coming in phase 2">
-                Download MP4 (TODO)
-              </button>
-              <button class="button" type="button" disabled title="Coming in phase 2">
-                Download MIDI (TODO)
-              </button>
-              <button class="button" type="button" @click="share">Share</button>
-            </div>
-            <p v-if="shareMessage" class="muted">{{ shareMessage }}</p>
-          </div>
 
           <ImageUploader @select="onFileSelected" />
 
+          <button
+            class="button button--ghost jukebox-controls__hide"
+            type="button"
+            @click="showControls = false"
+          >
+            Hide
+          </button>
+
           <p v-if="errorMessage" class="error">{{ errorMessage }}</p>
-          <p v-else-if="status === 'processing'" class="muted">Processing image...</p>
-          <p v-else class="muted">Ready. Press play to listen.</p>
-        </aside>
-      </main>
+        </div>
 
-      <audio
-        ref="audioEl"
-        :src="audioUrl"
-        preload="auto"
-        hidden
-        @timeupdate="onTimeUpdate"
-        @loadedmetadata="onLoadedMetadata"
-        @play="onPlay"
-        @pause="onPause"
-        @ended="onEnded"
-      ></audio>
-
-      <ProcessingOverlay :visible="status === 'processing'" />
+        <button
+          v-else
+          class="button button--ghost"
+          type="button"
+          @click="showControls = true"
+        >
+          Show controls
+        </button>
+      </div>
     </div>
+
+    <audio
+      ref="audioEl"
+      :src="audioUrl"
+      preload="auto"
+      hidden
+      @timeupdate="onTimeUpdate"
+      @loadedmetadata="onLoadedMetadata"
+      @play="onPlay"
+      @pause="onPause"
+      @ended="onEnded"
+    ></audio>
+
+    <ProcessingOverlay :visible="status === 'processing'" />
   </div>
 </template>
